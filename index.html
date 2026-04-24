@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="SafePlay" />
+  <title>SafePlay</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="assets/icons/icon-192.png" />
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body>
+ 
+  <div class="home-screen">
+ 
+    <header class="home-header">
+      <div class="logo">&#9824;</div>
+      <h1>SafePlay</h1>
+      <p class="tagline">Your games, safe &amp; simple</p>
+    </header>
+ 
+    <main class="game-grid">
+ 
+      <a href="games/solitaire/index.html" class="game-card" id="card-solitaire">
+        <div class="game-icon">&#9824;</div>
+        <div class="game-info">
+          <h2>Solitaire</h2>
+          <p>Classic Klondike card game</p>
+        </div>
+        <div class="game-arrow">&#8250;</div>
+      </a>
+ 
+      <a href="games/sudoku/index.html" class="game-card" id="card-sudoku">
+        <div class="game-icon">#</div>
+        <div class="game-info">
+          <h2>Sudoku</h2>
+          <p>Number puzzle — easy to hard</p>
+        </div>
+        <div class="game-arrow">&#8250;</div>
+      </a>
+ 
+    </main>
+ 
+    <footer class="home-footer">
+      <p>No adverts &nbsp;&bull;&nbsp; No sign-in &nbsp;&bull;&nbsp; No nonsense</p>
+    </footer>
+ 
+  </div>
+ 
+  <script>
+    // Register the service worker for offline support
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(function(err) {
+        console.log('Service worker registration failed:', err);
+      });
+    }
+  </script>
+ 
+</body>
+</html>
