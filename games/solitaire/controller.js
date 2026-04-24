@@ -1,52 +1,78 @@
 import {
-  selectTableau,
-  selectWaste,
-  moveToColumn,
-  moveToFoundation,
-  drawFromStock
+ selectTableau,
+ selectWaste,
+ moveToColumn,
+ moveToFoundation,
+ drawFromStock
 } from "./engine.js";
 
 import { render } from "./renderer.js";
 
-export function createController(state) {
-  const actions = {
+export function createController(state){
 
-    selectTableau: (c, i) => {
-      selectTableau(state, c, i);
-      render(state, actions);
-    },
+ const actions={
 
-    selectWaste: () => {
-      selectWaste(state);
-      render(state, actions);
-    },
+  selectTableau:(c,i)=>{
+    selectTableau(
+      state,
+      c,
+      i
+    );
 
-    moveColumn: (col) => {
-      const ok = moveToColumn(state, col);
-      if (!ok) state._invalid = true;
-      render(state, actions);
-    },
+    render(state,actions);
+  },
 
-    moveFoundation: (index) => {
-      const ok = moveToFoundation(state, index);
-      if (!ok) state._invalid = true;
-      render(state, actions);
-    },
+  selectWaste:()=>{
+    selectWaste(state);
+    render(state,actions);
+  },
 
-    draw: () => {
-      drawFromStock(state);
-      render(state, actions);
-    },
+  moveColumn:(col)=>{
 
-    undo: () => {
-      // optional if you still have undo later
-      render(state, actions);
-    },
+    const ok=
+      moveToColumn(
+       state,
+       col
+      );
 
-    hint: () => {
-      render(state, actions);
+    if(!ok){
+      state._invalid=true;
+      state.selected=null;
     }
-  };
 
-  return actions;
+    render(state,actions);
+  },
+
+  moveFoundation:(index)=>{
+
+    const ok=
+      moveToFoundation(
+        state,
+        index
+      );
+
+    if(!ok){
+      state._invalid=true;
+      state.selected=null;
+    }
+
+    render(state,actions);
+  },
+
+  draw:()=>{
+    drawFromStock(state);
+    render(state,actions);
+  },
+
+  undo:()=>{
+    render(state,actions);
+  },
+
+  hint:()=>{
+    render(state,actions);
+  }
+
+ };
+
+ return actions;
 }
