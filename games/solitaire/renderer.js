@@ -16,7 +16,7 @@ function renderStock(state, actions) {
 
   const back = document.createElement("div");
   back.className = "card back";
-  back.textContent = "Deck";
+  back.textContent = "";
 
   back.onclick = () => actions.draw();
 
@@ -60,6 +60,10 @@ function renderTableau(state, actions) {
       const el = document.createElement("div");
       el.className = "card";
 
+      // stacking position (IMPORTANT)
+      el.style.top = `${cardIndex * 24}px`;
+      el.style.zIndex = cardIndex;
+
       if (!card.faceUp) {
         el.classList.add("back");
       } else {
@@ -79,7 +83,6 @@ function renderTableau(state, actions) {
       col.appendChild(el);
     });
 
-    // ✅ FIXED: proper function closure (this was your crash)
     col.onclick = () => {
       if (!state.selected) return;
       actions.moveColumn(colIndex);
@@ -134,11 +137,8 @@ function renderUI(state, actions) {
     <button id="hintBtn">Hint</button>
   `;
 
-  const undoBtn = document.getElementById("undoBtn");
-  const hintBtn = document.getElementById("hintBtn");
-
-  if (undoBtn) undoBtn.onclick = actions.undo;
-  if (hintBtn) hintBtn.onclick = actions.hint;
+  document.getElementById("undoBtn").onclick = actions.undo;
+  document.getElementById("hintBtn").onclick = actions.hint;
 
   if (state.won) {
     let win = document.getElementById("win");
