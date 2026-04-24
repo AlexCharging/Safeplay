@@ -1,59 +1,71 @@
 // =============================================
-// SafePlay — Service Worker
-// This file makes the app work offline.
-// Once the user has visited the site once,
-// all the game files are saved on their device
-// so it works even without an internet connection.
+// SafePlay — Service Worker (FIXED)
+// GitHub Pages + iOS safe version
 // =============================================
 
-const CACHE_NAME = 'safeplay-v1';
+const CACHE_NAME = 'safeplay-v2';
 
-// All the files we want to save for offline use
+// Files to cache (ALL RELATIVE PATHS)
 const FILES_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/css/main.css',
-  '/manifest.json',
-  '/games/solitaire/index.html',
-  '/games/solitaire/solitaire.css',
-  '/games/solitaire/solitaire.js',
-  '/games/sudoku/index.html',
-  '/games/sudoku/sudoku.css',
-  '/games/sudoku/sudoku.js',
+  './',
+  './index.html',
+  './css/main.css',
+  './manifest.json',
+
+  './games/solitaire/index.html',
+  './games/solitaire/solitaire.css',
+  './games/solitaire/solitaire.js',
+
+  './games/sudoku/index.html',
+  './games/sudoku/sudoku.css',
+  './games/sudoku/sudoku.js'
 ];
 
-// When the service worker installs, cache all files
-self.addEventListener('install', function(event) {
+// INSTALL
+self.addEventListener('install', (event) => {
+  self.skipWaiting(); // force activation of new SW
+
   event.waitUntil(
-    caches.open(CACHE_NAME).then(function(cache) {
-      console.log('SafePlay: caching files for offline use');
+    caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(FILES_TO_CACHE);
     })
   );
 });
 
-// When the app requests a file, serve it from cache if available
-self.addEventListener('fetch', function(event) {
-  event.respondWith(
-    caches.match(event.request).then(function(response) {
-      // Return cached version if we have it, otherwise fetch from network
-      return response || fetch(event.request);
-    })
-  );
-});
-
-// Clean up old caches when a new version is deployed
-self.addEventListener('activate', function(event) {
+// ACTIVATE
+self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then(function(keyList) {
-      return Promise.all(
-        keyList.map(function(key) {
+    (async () => {
+      // delete old caches
+      const keys = await caches.keys();
+      await Promise.all(
+        keys.map((key) => {
           if (key !== CACHE_NAME) {
-            console.log('SafePlay: removing old cache', key);
             return caches.delete(key);
           }
         })
       );
-    })
+
+      // take control immediately
+      return self.clients.claim();
+    })()
+  );
+});
+
+// FETCH (network first, fallback to cache = more stable for updates)
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    fetch(event.request)
+      .then((response) => {
+        // update cache in background
+        const responseClone = response.clone();
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, responseClone);
+        });
+        return response;
+      })
+      .catch(() => {
+        return caches.match(event.request);
+      })
   );
 });
