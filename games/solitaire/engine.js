@@ -59,7 +59,7 @@ export function drawFromStock(state) {
   state.waste.push(card);
 }
 
-/* ---------------- MOVE TO TABLEAU ---------------- */
+/* ---------------- TABLEAU MOVE ---------------- */
 
 export function moveToColumn(state, toCol) {
   if (!state.selected) return false;
@@ -70,7 +70,6 @@ export function moveToColumn(state, toCol) {
   let card;
   let sourceCol = null;
 
-  /* TABLEAU → TABLEAU */
   if (state.selected.type === "tableau") {
     sourceCol = state.tableau[state.selected.col];
     const moving = sourceCol.slice(state.selected.index);
@@ -90,7 +89,6 @@ export function moveToColumn(state, toCol) {
     }
   }
 
-  /* WASTE → TABLEAU */
   if (state.selected.type === "waste") {
     card = state.waste[state.waste.length - 1];
 
@@ -148,7 +146,5 @@ export function moveToFoundation(state, index) {
 /* ---------------- WIN ---------------- */
 
 export function checkWin(state) {
-  const won = state.foundations.every(f => f.length === 13);
-  state.won = won;
-  return won;
+  state.won = state.foundations.every(f => f.length === 13);
 }
