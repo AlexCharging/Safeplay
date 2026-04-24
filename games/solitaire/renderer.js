@@ -79,9 +79,11 @@ function renderTableau(state, actions) {
       col.appendChild(el);
     });
 
+    // ✅ FIXED: proper function closure (this was your crash)
     col.onclick = () => {
       if (!state.selected) return;
       actions.moveColumn(colIndex);
+    };
   });
 }
 
