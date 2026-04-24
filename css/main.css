@@ -1,265 +1,270 @@
 /* =============================================
    SafePlay — Main Stylesheet
-   Designed for elderly users:
-   - Large text (minimum 18px)
-   - High contrast colours
-   - Generous touch targets (minimum 44px tall)
-   - Simple, calm layout with no distractions
-   ============================================= */
+============================================= */
 
-/* --- Google Font --- */
 @import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;600&family=Source+Sans+3:wght@400;600&display=swap');
 
-/* --- CSS Variables --- */
-:root {
-  --bg: #F5F0E8;
-  --surface: #FFFFFF;
-  --primary: #2C5F2E;
-  --primary-dark: #1A3D1B;
-  --accent: #8B1A1A;
-  --text: #1A1A1A;
-  --text-muted: #555555;
-  --border: #D0C8B8;
-  --radius: 16px;
-  --shadow: 0 4px 20px rgba(0,0,0,0.10);
+:root{
+  --bg:#F5F0E8;
+  --surface:#FFFFFF;
+  --primary:#2C5F2E;
+  --primary-dark:#1A3D1B;
+  --accent:#8B1A1A;
+  --text:#1A1A1A;
+  --text-muted:#555555;
+  --border:#D0C8B8;
+  --radius:16px;
+  --shadow:0 4px 20px rgba(0,0,0,.10);
 }
 
-/* --- Reset --- */
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+*,
+*::before,
+*::after{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
 }
 
-html {
-  font-size: 18px;
-  -webkit-text-size-adjust: 100%;
+html{
+  font-size:18px;
+  -webkit-text-size-adjust:100%;
 }
 
-body {
-  font-family: 'Source Sans 3', 'Helvetica Neue', sans-serif;
-  background-color: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  line-height: 1.6;
+body{
+  font-family:'Source Sans 3','Helvetica Neue',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  line-height:1.6;
 }
 
 /* =========================
-   HOME SCREEN
+   HOME
 ========================= */
 
-.home-screen {
-  max-width: 480px;
-  margin: 0 auto;
-  padding: 40px 24px 32px;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+.home-screen{
+  max-width:480px;
+  margin:0 auto;
+  padding:40px 24px 32px;
+  display:flex;
+  flex-direction:column;
+  min-height:100vh;
 }
 
-.home-header {
-  text-align: center;
-  margin-bottom: 48px;
+.home-header{
+  text-align:center;
+  margin-bottom:48px;
 }
 
-.logo {
-  font-size: 56px;
-  line-height: 1;
-  margin-bottom: 12px;
-  color: var(--primary);
+.logo{
+  font-size:56px;
+  margin-bottom:12px;
+  color:var(--primary);
 }
 
-.home-header h1 {
-  font-family: 'Lora', Georgia, serif;
-  font-size: 2.4rem;
-  font-weight: 600;
-  color: var(--primary);
-  margin-bottom: 8px;
+.home-header h1{
+  font-family:'Lora',Georgia,serif;
+  font-size:2.4rem;
+  color:var(--primary);
+  margin-bottom:8px;
 }
 
-.tagline {
-  font-size: 1rem;
-  color: var(--text-muted);
+.tagline{
+  color:var(--text-muted);
 }
 
-.game-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  flex: 1;
+.game-grid{
+  display:flex;
+  flex-direction:column;
+  gap:20px;
 }
 
-.game-card {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  background: var(--surface);
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius);
-  padding: 28px 24px;
-  text-decoration: none;
-  color: var(--text);
-  box-shadow: var(--shadow);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-  min-height: 100px;
-  cursor: pointer;
+.game-card{
+  display:flex;
+  align-items:center;
+  gap:20px;
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius);
+  padding:28px 24px;
+  text-decoration:none;
+  color:var(--text);
+  box-shadow:var(--shadow);
+  min-height:100px;
 }
 
-.game-card:hover,
-.game-card:focus {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 28px rgba(0,0,0,0.14);
-  outline: 3px solid var(--primary);
+#card-solitaire{
+  border-left:6px solid var(--accent);
 }
 
-.game-card:active {
-  transform: translateY(0px);
-}
-
-#card-solitaire {
-  border-left: 6px solid var(--accent);
-}
-
-#card-sudoku {
-  border-left: 6px solid var(--primary);
+#card-sudoku{
+  border-left:6px solid var(--primary);
 }
 
 /* =========================
    BACK BUTTON
 ========================= */
 
-.back-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  border: 2px solid var(--border);
-  border-radius: 10px;
-  padding: 10px 18px;
-  font-size: 1rem;
-  color: var(--text-muted);
-  text-decoration: none;
-  min-height: 44px;
+.back-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  border:2px solid var(--border);
+  border-radius:10px;
+  padding:10px 18px;
+  color:var(--text-muted);
+  text-decoration:none;
+  margin-bottom:18px;
 }
 
 /* =========================
-   SOLITAIRE PAGE (NEW CLEAN UI)
+   SOLITAIRE
 ========================= */
 
-.solitaire-page {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 20px;
+.solitaire-page{
+  max-width:980px;
+  margin:0 auto;
+  padding:24px;
 }
 
-/* TOP ROW */
-.solitaire-page #top-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 24px;
-  gap: 20px;
+.game-title{
+  font-family:'Lora',Georgia,serif;
+  font-size:2rem;
+  margin-bottom:18px;
 }
 
-.solitaire-page #stock,
-.solitaire-page #waste {
-  width: 80px;
-  height: 110px;
-  border-radius: 14px;
-  background: rgba(255,255,255,0.15);
-  box-shadow: 0 3px 8px rgba(0,0,0,0.25);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+#game{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  width:100%;
 }
 
-.solitaire-page #foundations {
-  display: flex;
-  gap: 10px;
+/* ---------- top row ---------- */
+
+#top-row{
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  gap:56px;
+  flex-wrap:wrap;
+  width:100%;
+  margin-bottom:36px;
 }
 
-.solitaire-page .foundation {
-  width: 80px;
-  height: 110px;
-  border-radius: 14px;
-  background: rgba(255,255,255,0.12);
-  box-shadow: inset 0 0 0 2px rgba(255,255,255,0.18);
+#stock,
+#waste{
+  width:80px;
+  height:110px;
+  border-radius:14px;
+  background:rgba(255,255,255,.2);
+  box-shadow:0 3px 8px rgba(0,0,0,.15);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
 }
 
-/* TABLEAU */
-.solitaire-page #tableau {
-  display: flex;
-  justify-content: center;
-  gap: 14px;
-  margin-top: 10px;
+#foundations{
+  display:flex;
+  gap:12px;
 }
 
-.solitaire-page .column {
-  width: 80px;
-  min-height: 420px;
-  position: relative;
+.foundation{
+  width:80px;
+  height:110px;
+  border-radius:14px;
+  background:rgba(255,255,255,.2);
+  box-shadow:inset 0 0 0 2px rgba(255,255,255,.35);
+  position:relative;
+}
+
+/* ---------- tableau ---------- */
+
+#tableau{
+  display:flex;
+  justify-content:center;
+  gap:16px;
+  width:100%;
+}
+
+.column{
+  width:80px;
+  min-height:560px;
+  position:relative;
+  flex-shrink:0;
 }
 
 /* =========================
-   CARDS (SINGLE SYSTEM)
+   CARDS
 ========================= */
 
-.solitaire-page .card {
-  width: 80px;
-  height: 110px;
-  border-radius: 12px;
-  background: #fff;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+/* base card for stock/waste/foundation */
+.card{
+  width:80px;
+  height:110px;
+  border-radius:12px;
+  background:#fff;
+  box-shadow:0 3px 8px rgba(0,0,0,.22);
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 
-  font-size: 20px;
-  user-select: none;
+  font-size:20px;
+  user-select:none;
 
-  position: absolute;
-  left: 0;
+  position:relative;
 }
 
-/* stacking */
-.solitaire-page .card + .card {
-  margin-top: 24px;
+/* ONLY tableau cards absolute */
+#tableau .card{
+  position:absolute;
+  left:0;
 }
 
-/* back card */
-.solitaire-page .card.back {
-  background: linear-gradient(135deg, #1f4d2b, #0e2b17);
-  color: white;
+.card.back{
+  background:linear-gradient(135deg,#1f4d2b,#0e2b17);
 }
 
-/* selected */
-.solitaire-page .card.selected {
-  outline: 3px solid #ffd54f;
-  transform: translateY(-4px);
+.card.selected{
+  outline:3px solid #ffd54f;
+}
+
+.card-value.red{
+  color:#c62828;
+  font-weight:600;
+}
+
+.card-value.black{
+  color:#111;
+  font-weight:600;
 }
 
 /* =========================
-   COLOURS (FIXED)
+   GAME BUTTONS
 ========================= */
 
-.card-value.red {
-  color: #c62828;
-  font-weight: 600;
+#ui{
+  margin-top:28px;
+  display:flex;
+  gap:16px;
 }
 
-.card-value.black {
-  color: #111;
-  font-weight: 600;
+#ui button{
+  min-height:48px;
+  min-width:120px;
+  border:none;
+  border-radius:12px;
+  font-size:1rem;
+  cursor:pointer;
+  background:var(--primary);
+  color:white;
 }
 
-/* =========================
-   ANIMATION
-========================= */
-
-@keyframes shake {
-  0% { transform: translateX(0); }
-  25% { transform: translateX(-4px); }
-  50% { transform: translateX(4px); }
-  75% { transform: translateX(-4px); }
-  100% { transform: translateX(0); }
+#win{
+  margin-top:22px;
+  font-size:1.5rem;
+  font-weight:600;
+  color:var(--primary);
 }
