@@ -1,0 +1,277 @@
+/* solitaire.css */
+
+/* ─── PAGE ────────────────────────────────────────────────── */
+
+.solitaire-page {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 20px 16px 40px;
+  user-select: none;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.game-title {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 1.6rem;
+  color: var(--primary);
+  flex: 1;
+}
+
+/* ─── LAYOUT ─────────────────────────────────────────────── */
+
+#game {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+/* top row: stock + waste + gap + foundations */
+#top-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  max-width: 640px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+#stock-waste {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+#spacer { flex: 1; }
+
+#foundations {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* ─── STOCK & WASTE ───────────────────────────────────────── */
+
+#stock,
+#waste {
+  width: 72px;
+  height: 100px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.15);
+  border: 2px dashed rgba(255,255,255,0.3);
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* ─── FOUNDATION SLOTS ────────────────────────────────────── */
+
+.foundation {
+  width: 72px;
+  height: 100px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.12);
+  border: 2px dashed rgba(255,255,255,0.3);
+  position: relative;
+  cursor: pointer;
+}
+
+/* ─── TABLEAU ─────────────────────────────────────────────── */
+
+#tableau {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 640px;
+}
+
+.column {
+  width: 72px;
+  min-height: 520px;
+  position: relative;
+  flex-shrink: 0;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+/* ─── CARDS ───────────────────────────────────────────────── */
+
+.card {
+  width: 72px;
+  height: 100px;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  cursor: pointer;
+  position: relative;
+  transition: box-shadow 0.1s;
+}
+
+/* face-down */
+.card.back {
+  background: linear-gradient(135deg, #1f4d2b 0%, #0e2b17 100%);
+  background-image:
+    linear-gradient(135deg, #1f4d2b 0%, #0e2b17 100%),
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 6px,
+      rgba(255,255,255,0.04) 6px,
+      rgba(255,255,255,0.04) 12px
+    );
+}
+
+/* empty stock: show recycle symbol */
+.card.back.stock-empty {
+  background: rgba(255,255,255,0.12);
+  border: 2px dashed rgba(255,255,255,0.4);
+  color: rgba(255,255,255,0.6);
+  font-size: 28px;
+}
+.card.back.stock-empty::after {
+  content: "↺";
+  color: rgba(255,255,255,0.7);
+  font-size: 32px;
+}
+
+/* selected card */
+.card.selected {
+  box-shadow: 0 0 0 3px #ffd54f, 0 4px 12px rgba(0,0,0,0.3);
+  z-index: 100 !important;
+}
+
+/* hint highlighting */
+.card.hint-source {
+  box-shadow: 0 0 0 3px #42a5f5, 0 4px 12px rgba(0,0,0,0.3);
+  animation: hint-pulse 0.6s ease-in-out infinite alternate;
+}
+
+.hint-target {
+  box-shadow: 0 0 0 3px #66bb6a !important;
+  animation: hint-pulse-green 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes hint-pulse {
+  from { box-shadow: 0 0 0 3px #42a5f5; }
+  to   { box-shadow: 0 0 0 6px #42a5f5, 0 0 20px #42a5f5; }
+}
+@keyframes hint-pulse-green {
+  from { box-shadow: 0 0 0 3px #66bb6a; }
+  to   { box-shadow: 0 0 0 6px #66bb6a, 0 0 20px #66bb6a; }
+}
+
+/* dragging */
+.moving {
+  opacity: 0.6;
+  cursor: grabbing !important;
+}
+
+/* card value text */
+.card-value {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.card-value.red   { color: #c62828; }
+.card-value.black { color: #111111; }
+
+/* ─── UI BAR ──────────────────────────────────────────────── */
+
+#ui {
+  margin-top: 32px;
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.score-box {
+  font-size: 1.1rem;
+  color: var(--text);
+  flex: 1;
+  min-width: 100px;
+}
+
+.score-box strong {
+  color: var(--primary);
+  font-size: 1.3rem;
+}
+
+.ui-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.ui-buttons button {
+  min-height: 44px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  cursor: pointer;
+  background: var(--primary);
+  color: #fff;
+  transition: background 0.15s;
+}
+
+.ui-buttons button:hover {
+  background: var(--primary-dark);
+}
+
+#drawBtn {
+  background: #555;
+}
+#drawBtn:hover {
+  background: #333;
+}
+
+/* ─── WIN BANNER ──────────────────────────────────────────── */
+
+#win {
+  margin-top: 28px;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--primary);
+  text-align: center;
+  padding: 20px 32px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  animation: pop-in 0.4s cubic-bezier(.175,.885,.32,1.275);
+}
+
+@keyframes pop-in {
+  from { transform: scale(0.7); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+/* ─── RESPONSIVE ─────────────────────────────────────────── */
+
+@media (max-width: 520px) {
+  .card, #stock, #waste, .foundation, .column {
+    width: 44px;
+    height: 62px;
+  }
+  .card { font-size: 13px; border-radius: 7px; }
+  .card-value { font-size: 13px; }
+  #tableau { gap: 5px; }
+  #foundations { gap: 5px; }
+  #stock-waste { gap: 5px; }
+  .column { min-height: 340px; }
+}
