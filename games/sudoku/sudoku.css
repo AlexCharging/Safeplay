@@ -1,22 +1,23 @@
-/* sudoku.css */
+/* sudoku.css — mobile-first */
 
 .sudoku-page {
   max-width: 480px;
   margin: 0 auto;
-  padding: 20px 16px 40px;
+  padding: 12px 12px 40px;
   user-select: none;
+  overflow-x: hidden;
 }
 
 .page-header {
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 16px;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
 .game-title {
   font-family: 'Lora', Georgia, serif;
-  font-size: 1.6rem;
+  font-size: 1.3rem;
   color: var(--primary);
   flex: 1;
 }
@@ -25,17 +26,17 @@
 
 .diff-row {
   display: flex;
-  gap: 10px;
-  margin-bottom: 14px;
+  gap: 8px;
+  margin-bottom: 10px;
 }
 
 .diff-btn {
   flex: 1;
-  padding: 10px;
+  padding: 8px 4px;
   border: 2px solid var(--border);
   border-radius: 10px;
   background: var(--surface);
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-family: inherit;
   color: var(--text-muted);
   cursor: pointer;
@@ -56,15 +57,15 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   color: var(--text-muted);
-  margin-bottom: 14px;
+  margin-bottom: 10px;
   padding: 0 2px;
 }
 
 #timer {
   font-variant-numeric: tabular-nums;
-  font-size: 1.05rem;
+  font-size: 1rem;
   color: var(--primary);
   font-weight: 600;
 }
@@ -74,12 +75,13 @@
 .sudoku-grid {
   display: grid;
   grid-template-columns: repeat(9, 1fr);
-  width: 100%;
+  /* fill the page width minus padding */
+  width: calc(100vw - 24px);
   max-width: 448px;
   border: 3px solid var(--text);
-  border-radius: 8px;
+  border-radius: 6px;
   overflow: hidden;
-  margin: 0 auto 18px;
+  margin: 0 auto 12px;
   background: var(--surface);
 }
 
@@ -90,7 +92,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: clamp(14px, 3.5vw, 22px);
+  /* font scales with cell size: cell = (vw-24)/9 */
+  font-size: clamp(12px, calc((100vw - 24px) / 9 * 0.52), 26px);
   font-weight: 400;
   border: 1px solid #ccc;
   cursor: pointer;
@@ -99,13 +102,12 @@
   transition: background 0.1s;
 }
 
-/* thick box borders */
-.s-cell.box-left   { border-left:  3px solid var(--text); }
-.s-cell.box-top    { border-top:   3px solid var(--text); }
-.s-cell.box-right  { border-right: 3px solid var(--text); }
-.s-cell.box-bottom { border-bottom:3px solid var(--text); }
+/* thick 3×3 box borders */
+.s-cell.box-left   { border-left:   3px solid var(--text); }
+.s-cell.box-top    { border-top:    3px solid var(--text); }
+.s-cell.box-right  { border-right:  3px solid var(--text); }
+.s-cell.box-bottom { border-bottom: 3px solid var(--text); }
 
-/* given (puzzle) numbers */
 .s-cell.given {
   font-weight: 700;
   color: var(--text);
@@ -113,26 +115,10 @@
   background: #f0ece2;
 }
 
-/* user-selected cell */
-.s-cell.selected {
-  background: #bbdefb !important;
-}
-
-/* same row/col/box */
-.s-cell.related {
-  background: #e8f4fd;
-}
-
-/* same number highlighted */
-.s-cell.same-num {
-  background: #c8e6c9;
-  font-weight: 600;
-}
-
-/* wrong answer */
-.s-cell.error {
-  color: #c62828 !important;
-}
+.s-cell.selected  { background: #bbdefb !important; }
+.s-cell.related   { background: #e8f4fd; }
+.s-cell.same-num  { background: #c8e6c9; font-weight: 600; }
+.s-cell.error     { color: #c62828 !important; }
 
 /* ─── PENCIL NOTES ────────────────────────────────────────── */
 
@@ -152,7 +138,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: clamp(7px, 1.6vw, 10px);
+  font-size: clamp(6px, calc((100vw - 24px) / 9 * 0.18), 9px);
   color: #555;
   line-height: 1;
 }
@@ -162,13 +148,13 @@
 .sudoku-win {
   background: var(--surface);
   border: 2px solid var(--primary);
-  border-radius: 14px;
-  padding: 18px 24px;
+  border-radius: 12px;
+  padding: 14px 16px;
   text-align: center;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 600;
   color: var(--primary);
-  margin-bottom: 18px;
+  margin-bottom: 12px;
   animation: pop-in 0.4s cubic-bezier(.175,.885,.32,1.275);
 }
 
@@ -180,59 +166,64 @@
 /* ─── KEYPAD ──────────────────────────────────────────────── */
 
 .keypad {
+  width: calc(100vw - 24px);
   max-width: 448px;
   margin: 0 auto;
 }
 
+/* number row: 9 equal buttons */
 .keypad-nums {
   display: grid;
   grid-template-columns: repeat(9, 1fr);
-  gap: 5px;
-  margin-bottom: 10px;
+  gap: 4px;
+  margin-bottom: 8px;
 }
 
 .key-num {
   aspect-ratio: 1;
   border: 2px solid var(--border);
-  border-radius: 10px;
+  border-radius: 8px;
   background: var(--surface);
-  font-size: clamp(16px, 4vw, 24px);
-  font-weight: 600;
+  font-size: clamp(14px, calc((100vw - 24px) / 9 * 0.45), 24px);
+  font-weight: 700;
   font-family: inherit;
   color: var(--primary);
   cursor: pointer;
-  min-height: 44px;
+  min-height: 40px;
   transition: background 0.12s, border-color 0.12s;
 }
 
-.key-num:hover,
 .key-num:active {
   background: var(--primary);
   border-color: var(--primary);
   color: #fff;
 }
 
+/* action row: 2×2 grid so buttons never overflow */
 .keypad-actions {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 6px;
 }
 
 .keypad-actions button {
-  padding: 10px 4px;
+  padding: 10px 8px;
   border: 2px solid var(--border);
   border-radius: 10px;
   background: var(--surface);
-  font-size: 0.82rem;
+  font-size: 0.88rem;
   font-family: inherit;
   color: var(--text-muted);
   cursor: pointer;
   min-height: 44px;
   transition: all 0.12s;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.keypad-actions button:hover {
+.keypad-actions button:active {
   border-color: var(--primary);
   color: var(--primary);
 }
@@ -248,6 +239,19 @@
   border-color: var(--primary);
   color: #fff;
 }
-#newGameBtn:hover {
-  background: var(--primary-dark);
+
+/* ─── LARGE SCREEN REFINEMENTS ────────────────────────────── */
+
+@media (min-width: 480px) {
+  .sudoku-page {
+    padding: 20px 16px 40px;
+  }
+  .sudoku-grid,
+  .keypad {
+    width: 100%;
+  }
+  .keypad-actions {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: auto;
+  }
 }
