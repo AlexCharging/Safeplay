@@ -82,7 +82,6 @@ function renderTableau(state, actions) {
     col.onclick = () => {
       if (!state.selected) return;
       actions.moveColumn(colIndex);
-    });
   });
 }
 
