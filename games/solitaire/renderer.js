@@ -2,6 +2,7 @@ export function render(state, actions) {
   renderStock(state, actions);
   renderWaste(state, actions);
   renderTableau(state, actions);
+  renderFoundations(state, actions);
   renderUI(state, actions);
 }
 
@@ -83,11 +84,31 @@ function renderTableau(state, actions) {
       if (!state.selected) return;
       actions.moveColumn(colIndex);
     };
+  });
+}
 
-    if (state._invalid) {
-      col.classList.add("invalid-flash");
-      setTimeout(() => col.classList.remove("invalid-flash"), 200);
+/* ---------------- FOUNDATIONS ---------------- */
+
+function renderFoundations(state, actions) {
+  const foundations = document.querySelectorAll(".foundation");
+
+  foundations.forEach((f, index) => {
+    f.innerHTML = "";
+
+    const pile = state.foundations[index];
+    const top = pile[pile.length - 1];
+
+    if (top) {
+      const el = document.createElement("div");
+      el.className = "card";
+      el.textContent = top.value + top.suit;
+      f.appendChild(el);
     }
+
+    f.onclick = () => {
+      if (!state.selected) return;
+      actions.moveFoundation(index);
+    };
   });
 }
 
@@ -113,25 +134,15 @@ function renderUI(state, actions) {
   if (undoBtn) undoBtn.onclick = actions.undo;
   if (hintBtn) hintBtn.onclick = actions.hint;
 
-  renderWin(state);
-}
+  if (state.won) {
+    let win = document.getElementById("win");
 
-/* ---------------- WIN ---------------- */
+    if (!win) {
+      win = document.createElement("div");
+      win.id = "win";
+      document.body.appendChild(win);
+    }
 
-function renderWin(state) {
-  if (!state.won) return;
-
-  let win = document.getElementById("win");
-
-  if (!win) {
-    win = document.createElement("div");
-    win.id = "win";
-    document.body.appendChild(win);
+    win.innerHTML = "🎉 You Win! 🎉";
   }
-
-  win.innerHTML = `
-    <div class="win-box">
-      🎉 You Win! 🎉
-    </div>
-  `;
 }
