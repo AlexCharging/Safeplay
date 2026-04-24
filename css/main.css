@@ -273,8 +273,13 @@ body {
   justify-content: center;
   font-size: 12px;
   user-select: none;
-   cursor: pointer;
+  cursor: pointer;
 }
+
+.card.invalid-flash {
+  animation: shake 0.2s ease;
+}
+
 .card.selected {
   outline: 3px solid var(--primary);
 }
