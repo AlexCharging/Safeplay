@@ -268,3 +268,19 @@ body{
   font-weight:600;
   color:var(--primary);
 }
+.moving{
+  opacity:.7;
+}
+
+.card{
+  cursor:grab;
+}
+
+.card:active{
+  cursor:grabbing;
+}
+
+.column,
+.foundation{
+  min-height:120px;
+}
