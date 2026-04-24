@@ -267,20 +267,27 @@ body{
   font-size:1.5rem;
   font-weight:600;
   color:var(--primary);
-}
-.moving{
-  opacity:.7;
-}
-
-.card{
-  cursor:grab;
-}
-
-.card:active{
-  cursor:grabbing;
-}
 
 .column,
 .foundation{
   min-height:120px;
+}
+
+.moving{
+ outline:3px solid #ffd54f;
+}
+
+.card{
+ cursor:grab;
+}
+
+.card:active{
+ cursor:grabbing;
+}
+
+/* buttons above cards */
+#ui{
+ position:relative;
+ z-index:999;
+ margin-top:40px;
 }
