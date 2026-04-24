@@ -1,4 +1,4 @@
-export const createInitialState = () => {
+export function createInitialState() {
   const suits = ["♥", "♦", "♣", "♠"];
   const values = ["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
 
@@ -40,6 +40,7 @@ export const createInitialState = () => {
     stock: deck,
     waste: [],
     foundations: [[],[],[],[]],
-    selected: null
+    selected: null,
+    _invalid: false
   };
-};
+}
