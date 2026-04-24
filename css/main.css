@@ -206,4 +206,77 @@ body {
     padding: 32px 28px;
   }
 }
- 
+
+
+/* =========================
+   SAFEPLAY SOLITAIRE
+   ========================= */
+
+.solitaire-page {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.game-title {
+  margin-top: 20px;
+  color: #2C5F2E;
+  font-family: sans-serif;
+}
+
+#game {
+  margin-top: 20px;
+}
+
+/* TOP ROW */
+#top-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+#foundations {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+/* PILES */
+.pile,
+.foundation,
+.column {
+  width: 60px;
+  min-height: 80px;
+  border: 2px dashed #ccc;
+  border-radius: 10px;
+  background: #f9f9f9;
+}
+
+/* TABLEAU */
+#tableau {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+/* CARDS */
+.card {
+  width: 100%;
+  height: 26px;
+  background: white;
+  border: 1px solid #333;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  user-select: none;
+}
+
+/* BACK OF CARD */
+.card.back {
+  background: #2C5F2E;
+  color: white;
+}
