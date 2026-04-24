@@ -35,7 +35,7 @@ export function selectWaste(state) {
 }
 
 export function moveToColumn(state, toCol) {
-  if (!state.selected) return;
+  if (!state.selected) return false;
 
   const targetCol = state.tableau[toCol];
   const targetTop = targetCol[targetCol.length - 1];
@@ -46,7 +46,9 @@ export function moveToColumn(state, toCol) {
     const moving = fromCol.slice(state.selected.cardIndex);
     const card = moving[0];
 
-    if (!canPlace(card, targetTop)) return;
+    if (!canPlace(card, targetTop)) {
+      return false;
+    }
 
     fromCol.splice(state.selected.cardIndex);
     targetCol.push(...moving);
@@ -56,11 +58,14 @@ export function moveToColumn(state, toCol) {
   if (state.selected.type === "waste") {
     const card = state.waste[state.waste.length - 1];
 
-    if (!canPlace(card, targetTop)) return;
+    if (!canPlace(card, targetTop)) {
+      return false;
+    }
 
     state.waste.pop();
     targetCol.push(card);
   }
 
   state.selected = null;
+  return true;
 }
