@@ -1,29 +1,31 @@
-/* solitaire.css */
+/* solitaire.css — mobile-first layout */
 
 /* ─── PAGE ────────────────────────────────────────────────── */
 
 .solitaire-page {
+  width: 100%;
   max-width: 700px;
   margin: 0 auto;
-  padding: 20px 16px 40px;
+  padding: 12px 8px 32px;
   user-select: none;
+  overflow-x: hidden; /* prevent horizontal scroll */
 }
 
 .page-header {
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 20px;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
 .game-title {
   font-family: 'Lora', Georgia, serif;
-  font-size: 1.6rem;
+  font-size: 1.3rem;
   color: var(--primary);
   flex: 1;
 }
 
-/* ─── LAYOUT ─────────────────────────────────────────────── */
+/* ─── GAME CONTAINER ─────────────────────────────────────── */
 
 #game {
   display: flex;
@@ -32,54 +34,28 @@
   width: 100%;
 }
 
-/* top row: stock + waste + gap + foundations */
+/* ─── TOP ROW ────────────────────────────────────────────── */
+
 #top-row {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
   width: 100%;
-  max-width: 640px;
-  margin-bottom: 28px;
-  flex-wrap: wrap;
+  margin-bottom: 10px;
+  /* no gap — we use card width + column gap via CSS vars below */
 }
 
 #stock-waste {
   display: flex;
-  gap: 10px;
+  gap: var(--col-gap);
   flex-shrink: 0;
 }
 
-#spacer { flex: 1; }
+#spacer { flex: 1; min-width: 0; }
 
 #foundations {
   display: flex;
-  gap: 10px;
+  gap: var(--col-gap);
   flex-shrink: 0;
-}
-
-/* ─── STOCK & WASTE ───────────────────────────────────────── */
-
-#stock,
-#waste {
-  width: 72px;
-  height: 100px;
-  border-radius: 12px;
-  background: rgba(255,255,255,0.15);
-  border: 2px dashed rgba(255,255,255,0.3);
-  position: relative;
-  flex-shrink: 0;
-}
-
-/* ─── FOUNDATION SLOTS ────────────────────────────────────── */
-
-.foundation {
-  width: 72px;
-  height: 100px;
-  border-radius: 12px;
-  background: rgba(255,255,255,0.12);
-  border: 2px dashed rgba(255,255,255,0.3);
-  position: relative;
-  cursor: pointer;
 }
 
 /* ─── TABLEAU ─────────────────────────────────────────────── */
@@ -87,76 +63,105 @@
 #tableau {
   display: flex;
   justify-content: center;
-  gap: 10px;
+  gap: var(--col-gap);
   width: 100%;
-  max-width: 640px;
 }
 
 .column {
-  width: 72px;
-  min-height: 520px;
+  width: var(--card-w);
+  min-height: 420px;
   position: relative;
   flex-shrink: 0;
-  border-radius: 12px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* ─── CARD SIZE TOKENS ───────────────────────────────────── *
+ * We size everything from the viewport width.
+ * 7 cards + 6 gaps must fit in 100vw minus page padding (16px).
+ * Formula: card-w = (100vw - 16px - 6*gap) / 7
+ * At 390px (iPhone 14): (390-16-30)/7 ≈ 49px  ✓
+ * We use CSS custom properties so one change resizes everything.
+ * ─────────────────────────────────────────────────────────── */
+
+:root {
+  --col-gap:  5px;
+  --card-w:   calc((100vw - 16px - 6 * var(--col-gap)) / 7);
+  --card-h:   calc(var(--card-w) * 1.4);   /* standard card ratio */
+  --card-r:   calc(var(--card-w) * 0.13);  /* border radius */
+  --card-fs:  calc(var(--card-w) * 0.28);  /* font size */
+  --fan-step: calc(var(--card-w) * 0.38);  /* vertical fan overlap */
+}
+
+/* cap card size on larger screens */
+@media (min-width: 520px) {
+  :root {
+    --card-w: 68px;
+    --col-gap: 8px;
+  }
+}
+
+/* ─── SLOT ZONES (stock, waste, foundation) ───────────────── */
+
+#stock,
+#waste,
+.foundation {
+  width: var(--card-w);
+  height: var(--card-h);
+  border-radius: var(--card-r);
+  background: rgba(255,255,255,0.12);
+  border: 2px dashed rgba(0,0,0,0.18);
+  position: relative;
+  flex-shrink: 0;
   cursor: pointer;
 }
 
 /* ─── CARDS ───────────────────────────────────────────────── */
 
 .card {
-  width: 72px;
-  height: 100px;
-  border-radius: 10px;
+  width: var(--card-w);
+  height: var(--card-h);
+  border-radius: var(--card-r);
   background: #fff;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.22);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 17px;
   cursor: pointer;
   position: relative;
-  transition: box-shadow 0.1s;
+  flex-shrink: 0;
+  /* no transition on position — causes lag during touch */
 }
 
-/* face-down */
+/* face-down card */
 .card.back {
   background: linear-gradient(135deg, #1f4d2b 0%, #0e2b17 100%);
-  background-image:
-    linear-gradient(135deg, #1f4d2b 0%, #0e2b17 100%),
-    repeating-linear-gradient(
-      45deg,
-      transparent,
-      transparent 6px,
-      rgba(255,255,255,0.04) 6px,
-      rgba(255,255,255,0.04) 12px
-    );
 }
 
-/* empty stock: show recycle symbol */
+/* empty stock recycle indicator */
 .card.back.stock-empty {
-  background: rgba(255,255,255,0.12);
-  border: 2px dashed rgba(255,255,255,0.4);
-  color: rgba(255,255,255,0.6);
-  font-size: 28px;
+  background: rgba(255,255,255,0.1);
+  border: 2px dashed rgba(0,0,0,0.2);
 }
 .card.back.stock-empty::after {
   content: "↺";
-  color: rgba(255,255,255,0.7);
-  font-size: 32px;
+  color: var(--primary);
+  font-size: calc(var(--card-w) * 0.5);
 }
 
-/* selected card */
+/* selected */
 .card.selected {
-  box-shadow: 0 0 0 3px #ffd54f, 0 4px 12px rgba(0,0,0,0.3);
+  box-shadow: 0 0 0 3px #ffd54f, 0 3px 10px rgba(0,0,0,0.3);
   z-index: 100 !important;
 }
 
-/* hint highlighting */
+/* hint source — blue pulse */
 .card.hint-source {
-  box-shadow: 0 0 0 3px #42a5f5, 0 4px 12px rgba(0,0,0,0.3);
+  box-shadow: 0 0 0 3px #42a5f5, 0 3px 10px rgba(0,0,0,0.3);
   animation: hint-pulse 0.6s ease-in-out infinite alternate;
 }
 
+/* hint target — green glow on slot or column */
 .hint-target {
   box-shadow: 0 0 0 3px #66bb6a !important;
   animation: hint-pulse-green 0.6s ease-in-out infinite alternate;
@@ -164,92 +169,83 @@
 
 @keyframes hint-pulse {
   from { box-shadow: 0 0 0 3px #42a5f5; }
-  to   { box-shadow: 0 0 0 6px #42a5f5, 0 0 20px #42a5f5; }
+  to   { box-shadow: 0 0 0 5px #42a5f5, 0 0 14px #42a5f5; }
 }
 @keyframes hint-pulse-green {
   from { box-shadow: 0 0 0 3px #66bb6a; }
-  to   { box-shadow: 0 0 0 6px #66bb6a, 0 0 20px #66bb6a; }
+  to   { box-shadow: 0 0 0 5px #66bb6a, 0 0 14px #66bb6a; }
 }
 
-/* dragging */
-.moving {
-  opacity: 0.6;
-  cursor: grabbing !important;
+/* touch-drag ghost */
+.touch-ghost {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.85;
+  transform: translate(-50%, -50%);
 }
 
-/* card value text */
+/* card value label */
 .card-value {
-  font-size: 18px;
-  font-weight: 600;
+  font-size: var(--card-fs);
+  font-weight: 700;
   line-height: 1;
+  pointer-events: none;
 }
-
 .card-value.red   { color: #c62828; }
-.card-value.black { color: #111111; }
+.card-value.black { color: #111; }
 
 /* ─── UI BAR ──────────────────────────────────────────────── */
 
 #ui {
-  margin-top: 32px;
+  margin-top: 16px;
   width: 100%;
-  max-width: 640px;
   display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .score-box {
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: var(--text);
-  flex: 1;
-  min-width: 100px;
+  text-align: center;
 }
 
 .score-box strong {
   color: var(--primary);
-  font-size: 1.3rem;
+  font-size: 1.15rem;
 }
 
 .ui-buttons {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
 }
 
 .ui-buttons button {
   min-height: 44px;
-  padding: 0 18px;
+  padding: 0 4px;
   border: none;
   border-radius: 10px;
-  font-size: 0.95rem;
+  font-size: 0.82rem;
   font-family: inherit;
   cursor: pointer;
   background: var(--primary);
   color: #fff;
-  transition: background 0.15s;
+  white-space: nowrap;
 }
 
-.ui-buttons button:hover {
-  background: var(--primary-dark);
-}
-
-#drawBtn {
-  background: #555;
-}
-#drawBtn:hover {
-  background: #333;
-}
+#drawBtn { background: #555; }
 
 /* ─── WIN BANNER ──────────────────────────────────────────── */
 
 #win {
-  margin-top: 28px;
-  font-size: 1.6rem;
+  margin-top: 20px;
+  font-size: 1.3rem;
   font-weight: 700;
   color: var(--primary);
   text-align: center;
-  padding: 20px 32px;
+  padding: 18px 24px;
   background: #fff;
   border-radius: 16px;
   box-shadow: var(--shadow);
@@ -259,19 +255,4 @@
 @keyframes pop-in {
   from { transform: scale(0.7); opacity: 0; }
   to   { transform: scale(1);   opacity: 1; }
-}
-
-/* ─── RESPONSIVE ─────────────────────────────────────────── */
-
-@media (max-width: 520px) {
-  .card, #stock, #waste, .foundation, .column {
-    width: 44px;
-    height: 62px;
-  }
-  .card { font-size: 13px; border-radius: 7px; }
-  .card-value { font-size: 13px; }
-  #tableau { gap: 5px; }
-  #foundations { gap: 5px; }
-  #stock-waste { gap: 5px; }
-  .column { min-height: 340px; }
 }
