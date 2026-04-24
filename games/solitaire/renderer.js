@@ -1,228 +1,306 @@
 import { enableDrag } from "./drag.js";
 
-export function render(state, actions) {
-  renderStock(state, actions);
-  renderWaste(state, actions);
-  renderTableau(state, actions);
-  renderFoundations(state, actions);
-  renderUI(state, actions);
+export function render(state,actions){
+  renderStock(state,actions);
+  renderWaste(state,actions);
+  renderTableau(state,actions);
+  renderFoundations(state,actions);
+  renderUI(state,actions);
 }
 
 /* ---------- STOCK ---------- */
 
-function renderStock(state, actions) {
-  const stock = document.getElementById("stock");
-  if (!stock) return;
+function renderStock(state,actions){
 
-  stock.innerHTML = "";
+ const stock=
+  document.getElementById("stock");
 
-  if (!state.stock.length) return;
+ if(!stock) return;
 
-  const back = document.createElement("div");
-  back.className = "card back";
-  back.onclick = () => actions.draw();
+ stock.innerHTML="";
 
-  stock.appendChild(back);
+ if(!state.stock.length) return;
+
+ const back=document.createElement("div");
+ back.className="card back";
+
+ back.onclick=()=>actions.draw();
+
+ stock.appendChild(back);
 }
 
 /* ---------- WASTE ---------- */
 
-function renderWaste(state, actions) {
-  const waste = document.getElementById("waste");
-  if (!waste) return;
+function renderWaste(state,actions){
 
-  waste.innerHTML = "";
+ const waste=
+  document.getElementById("waste");
 
-  const card = state.waste[state.waste.length - 1];
-  if (!card) return;
+ if(!waste) return;
 
-  const el = document.createElement("div");
-  el.className = "card";
+ waste.innerHTML="";
 
-  if (state.selected?.type === "waste") {
-    el.classList.add("selected");
-  }
+ const card=
+  state.waste[
+   state.waste.length-1
+  ];
 
-  el.innerHTML = `
-    <span class="card-value ${card.color}">
-      ${card.value}${card.suit}
-    </span>
-  `;
+ if(!card) return;
 
-  el.onclick = () => actions.selectWaste();
+ const el=document.createElement("div");
+ el.className="card";
 
-  enableDrag(el, {
-    onDragStart: () => actions.selectWaste()
-  });
+ if(state.selected?.type==="waste"){
+  el.classList.add("selected");
+ }
 
-  waste.appendChild(el);
+ el.innerHTML=`
+ <span class="card-value ${card.color}">
+ ${card.value}${card.suit}
+ </span>
+ `;
+
+ el.onclick=()=>actions.selectWaste();
+
+ enableDrag(el,{
+  onDragStart:()=>actions.selectWaste()
+ });
+
+ waste.appendChild(el);
 }
 
 /* ---------- TABLEAU ---------- */
 
-function renderTableau(state, actions) {
+function renderTableau(state,actions){
 
-  const cols = document.querySelectorAll(".column");
+ const cols=
+  document.querySelectorAll(".column");
 
-  cols.forEach((col, colIndex) => {
+ cols.forEach((col,colIndex)=>{
 
-    col.innerHTML = "";
+   col.innerHTML="";
 
-    enableDrag(col, {
-      onDrop: () => {
-        if (state.selected) {
-          actions.moveColumn(colIndex);
-        }
-      }
-    });
+   /* proper drop zone */
+   col.addEventListener(
+    "dragover",
+    e=>{
+      e.preventDefault();
+    }
+   );
 
-    state.tableau[colIndex].forEach((card, cardIndex) => {
+   col.addEventListener(
+    "drop",
+    e=>{
+      e.preventDefault();
 
-      const el = document.createElement("div");
-      el.className = "card";
-
-      el.style.top = `${cardIndex * 24}px`;
-      el.style.zIndex = cardIndex;
-
-      if (
-        state.selected &&
-        state.selected.type === "tableau" &&
-        state.selected.col === colIndex &&
-        state.selected.index === cardIndex
-      ) {
-        el.classList.add("selected");
-      }
-
-      if (!card.faceUp) {
-        el.classList.add("back");
-      }
-      else {
-        el.innerHTML = `
-          <span class="card-value ${card.color}">
-            ${card.value}${card.suit}
-          </span>
-        `;
-      }
-
-      el.onclick = (e) => {
-        e.stopPropagation();
-
-        if (!card.faceUp) return;
-
-        actions.selectTableau(
-          colIndex,
-          cardIndex
+      if(state.selected){
+        actions.moveColumn(
+         colIndex
         );
-      };
-
-      if (card.faceUp) {
-        enableDrag(el, {
-          onDragStart: () => {
-            actions.selectTableau(
-              colIndex,
-              cardIndex
-            );
-          }
-        });
       }
+    }
+   );
 
-      col.appendChild(el);
+   state.tableau[colIndex].forEach(
+   (card,cardIndex)=>{
 
-    });
+    const el=document.createElement("div");
+    el.className="card";
 
-    col.onclick = () => {
-      if (!state.selected) return;
-      actions.moveColumn(colIndex);
+    el.style.top=
+      `${cardIndex*24}px`;
+
+    el.style.zIndex=cardIndex;
+
+    if(
+      state.selected &&
+      state.selected.type==="tableau" &&
+      state.selected.col===colIndex &&
+      state.selected.index===cardIndex
+    ){
+      el.classList.add(
+       "selected"
+      );
+    }
+
+    if(!card.faceUp){
+      el.classList.add("back");
+    }
+    else{
+      el.innerHTML=`
+      <span class="card-value ${card.color}">
+      ${card.value}${card.suit}
+      </span>
+      `;
+    }
+
+    el.onclick=(e)=>{
+      e.stopPropagation();
+
+      if(!card.faceUp) return;
+
+      actions.selectTableau(
+       colIndex,
+       cardIndex
+      );
     };
 
-  });
+    if(card.faceUp){
+      enableDrag(el,{
+       onDragStart:()=>{
+         actions.selectTableau(
+          colIndex,
+          cardIndex
+         );
+       }
+      });
+    }
+
+    col.appendChild(el);
+
+   });
+
+   col.onclick=()=>{
+     if(!state.selected) return;
+     actions.moveColumn(colIndex);
+   };
+
+ });
 }
 
 /* ---------- FOUNDATIONS ---------- */
 
-function renderFoundations(state, actions) {
+function renderFoundations(
+ state,
+ actions
+){
 
-  const foundations =
-    document.querySelectorAll(".foundation");
+ const foundations=
+  document.querySelectorAll(
+   ".foundation"
+  );
 
-  foundations.forEach((f, index) => {
+ foundations.forEach((f,index)=>{
 
-    f.innerHTML = "";
+  f.innerHTML="";
 
-    enableDrag(f, {
-      onDrop: () => {
-        if (state.selected) {
-          actions.moveFoundation(index);
-        }
-      }
-    });
+  f.addEventListener(
+   "dragover",
+   e=>{
+    e.preventDefault();
+   }
+  );
 
-    const pile = state.foundations[index];
-    const top = pile[pile.length - 1];
+  f.addEventListener(
+   "drop",
+   e=>{
+    e.preventDefault();
 
-    if (top) {
-      const el = document.createElement("div");
-      el.className = "card";
-
-      el.innerHTML = `
-        <span class="card-value ${top.color}">
-         ${top.value}${top.suit}
-        </span>
-      `;
-
-      f.appendChild(el);
+    if(state.selected){
+      actions.moveFoundation(
+       index
+      );
     }
+   }
+  );
 
-    f.onclick = () => {
-      if (!state.selected) return;
-      actions.moveFoundation(index);
-    };
+  const pile=
+   state.foundations[index];
 
-  });
+  const top=
+   pile[pile.length-1];
+
+  if(top){
+
+   const el=document.createElement("div");
+   el.className="card";
+
+   el.innerHTML=`
+   <span class="card-value ${top.color}">
+   ${top.value}${top.suit}
+   </span>
+   `;
+
+   f.appendChild(el);
+  }
+
+  f.onclick=()=>{
+   if(!state.selected) return;
+   actions.moveFoundation(index);
+  };
+
+ });
 }
 
 /* ---------- UI ---------- */
 
-function renderUI(state, actions) {
+function renderUI(state,actions){
 
-  let ui = document.getElementById("ui");
+ let ui=
+  document.getElementById("ui");
 
-  if (!ui) {
-    ui = document.createElement("div");
-    ui.id = "ui";
+ if(!ui){
+  ui=document.createElement("div");
+  ui.id="ui";
 
-    document
-      .getElementById("game")
-      .appendChild(ui);
-  }
+  document
+   .getElementById("game")
+   .appendChild(ui);
+ }
 
-  ui.innerHTML = `
-   <button id="undoBtn">Undo</button>
-   <button id="hintBtn">Hint</button>
-  `;
+ ui.innerHTML=`
+ <button id="undoBtn">Undo</button>
+ <button id="hintBtn">Hint</button>
+ `;
 
-  document.getElementById(
-    "undoBtn"
-  ).onclick = actions.undo;
+ document
+ .getElementById("undoBtn")
+ .onclick=actions.undo;
 
-  document.getElementById(
-    "hintBtn"
-  ).onclick = actions.hint;
+ document
+ .getElementById("hintBtn")
+ .onclick=actions.hint;
 
-  if (state.won) {
+ if(state.won){
 
-    let win=
-      document.getElementById("win");
+ let win=
+  document.getElementById("win");
 
-    if (!win) {
-      win=document.createElement("div");
-      win.id="win";
+ if(!win){
+  win=document.createElement("div");
+  win.id="win";
 
-      document
-       .getElementById("game")
-       .appendChild(win);
-    }
+  document
+   .getElementById("game")
+   .appendChild(win);
+ }
 
-    win.innerHTML="🎉 You Win! 🎉";
-  }
+ win.innerHTML="🎉 You Win! 🎉";
+ }
+}
+```
+
+---
+
+# 4) Add these at bottom of `main.css`
+
+```css
+/* drag fixes */
+.moving{
+ outline:3px solid #ffd54f;
+}
+
+.card{
+ cursor:grab;
+}
+
+.card:active{
+ cursor:grabbing;
+}
+
+/* buttons above cards */
+#ui{
+ position:relative;
+ z-index:999;
+ margin-top:40px;
 }
