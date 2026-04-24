@@ -274,7 +274,9 @@ body {
   font-size: 12px;
   user-select: none;
 }
-
+.card.selected {
+  outline: 3px solid var(--primary);
+}
 /* BACK OF CARD */
 .card.back {
   background: #2C5F2E;
