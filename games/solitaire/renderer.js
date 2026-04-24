@@ -6,7 +6,7 @@ export function render(state, actions) {
   renderUI(state, actions);
 }
 
-/* ---------------- STOCK ---------------- */
+/* ---------- STOCK ---------- */
 
 function renderStock(state, actions) {
   const stock = document.getElementById("stock");
@@ -14,98 +14,102 @@ function renderStock(state, actions) {
 
   stock.innerHTML = "";
 
+  if (!state.stock.length) return;
+
   const back = document.createElement("div");
   back.className = "card back";
-  back.textContent = "";
 
   back.onclick = () => actions.draw();
 
   stock.appendChild(back);
 }
 
-/* ---------------- WASTE ---------------- */
+/* ---------- WASTE ---------- */
 
-function renderWaste(state, actions) {
+function renderWaste(state, actions){
   const waste = document.getElementById("waste");
-  if (!waste) return;
+  if(!waste) return;
 
-  waste.innerHTML = "";
+  waste.innerHTML="";
 
-  const card = state.waste[state.waste.length - 1];
-  if (!card) return;
+  const card = state.waste[state.waste.length-1];
+  if(!card) return;
 
-  const el = document.createElement("div");
-  el.className = "card";
+  const el=document.createElement("div");
+  el.className="card";
 
-  el.innerHTML = `
+  el.innerHTML=`
     <span class="card-value ${card.color}">
       ${card.value}${card.suit}
     </span>
   `;
 
-  el.onclick = () => actions.selectWaste();
+  el.onclick=()=>actions.selectWaste();
 
   waste.appendChild(el);
 }
 
-/* ---------------- TABLEAU ---------------- */
+/* ---------- TABLEAU ---------- */
 
-function renderTableau(state, actions) {
-  const cols = document.querySelectorAll(".column");
+function renderTableau(state, actions){
+  const cols=document.querySelectorAll(".column");
 
-  cols.forEach((col, colIndex) => {
-    col.innerHTML = "";
+  cols.forEach((col,colIndex)=>{
 
-    state.tableau[colIndex].forEach((card, cardIndex) => {
-      const el = document.createElement("div");
-      el.className = "card";
+    col.innerHTML="";
 
-      // stacking position (IMPORTANT)
-      el.style.top = `${cardIndex * 24}px`;
-      el.style.zIndex = cardIndex;
+    state.tableau[colIndex].forEach((card,cardIndex)=>{
 
-      if (!card.faceUp) {
+      const el=document.createElement("div");
+      el.className="card";
+
+      el.style.top=`${cardIndex*24}px`;
+      el.style.zIndex=cardIndex;
+
+      if(!card.faceUp){
         el.classList.add("back");
-      } else {
-        el.innerHTML = `
+      } else{
+        el.innerHTML=`
           <span class="card-value ${card.color}">
             ${card.value}${card.suit}
           </span>
         `;
       }
 
-      el.onclick = (e) => {
+      el.onclick=(e)=>{
         e.stopPropagation();
-        if (!card.faceUp) return;
-        actions.selectTableau(colIndex, cardIndex);
+        if(!card.faceUp) return;
+        actions.selectTableau(colIndex,cardIndex);
       };
 
       col.appendChild(el);
     });
 
-    col.onclick = () => {
-      if (!state.selected) return;
+    col.onclick=()=>{
+      if(!state.selected) return;
       actions.moveColumn(colIndex);
     };
+
   });
 }
 
-/* ---------------- FOUNDATIONS ---------------- */
+/* ---------- FOUNDATIONS ---------- */
 
-function renderFoundations(state, actions) {
-  const foundations = document.querySelectorAll(".foundation");
+function renderFoundations(state,actions){
+  const foundations=document.querySelectorAll(".foundation");
 
-  foundations.forEach((f, index) => {
-    f.innerHTML = "";
+  foundations.forEach((f,index)=>{
 
-    const pile = state.foundations[index];
-    const top = pile[pile.length - 1];
+    f.innerHTML="";
 
-    if (top) {
-      const el = document.createElement("div");
-      el.className = "card";
+    const pile=state.foundations[index];
+    const top=pile[pile.length-1];
 
-      el.innerHTML = `
+    if(top){
+      const el=document.createElement("div");
+      el.className="card";
+
+      el.innerHTML=`
         <span class="card-value ${top.color}">
           ${top.value}${top.suit}
         </span>
@@ -114,41 +118,45 @@ function renderFoundations(state, actions) {
       f.appendChild(el);
     }
 
-    f.onclick = () => {
-      if (!state.selected) return;
+    f.onclick=()=>{
+      if(!state.selected) return;
       actions.moveFoundation(index);
     };
+
   });
 }
 
-/* ---------------- UI ---------------- */
+/* ---------- UI ---------- */
 
-function renderUI(state, actions) {
-  let ui = document.getElementById("ui");
+function renderUI(state,actions){
 
-  if (!ui) {
-    ui = document.createElement("div");
-    ui.id = "ui";
-    document.body.appendChild(ui);
+  let ui=document.getElementById("ui");
+
+  if(!ui){
+    ui=document.createElement("div");
+    ui.id="ui";
+
+    document.getElementById("game").appendChild(ui);
   }
 
-  ui.innerHTML = `
+  ui.innerHTML=`
     <button id="undoBtn">Undo</button>
     <button id="hintBtn">Hint</button>
   `;
 
-  document.getElementById("undoBtn").onclick = actions.undo;
-  document.getElementById("hintBtn").onclick = actions.hint;
+  document.getElementById("undoBtn").onclick=actions.undo;
+  document.getElementById("hintBtn").onclick=actions.hint;
 
-  if (state.won) {
-    let win = document.getElementById("win");
+  if(state.won){
 
-    if (!win) {
-      win = document.createElement("div");
-      win.id = "win";
-      document.body.appendChild(win);
+    let win=document.getElementById("win");
+
+    if(!win){
+      win=document.createElement("div");
+      win.id="win";
+      document.getElementById("game").appendChild(win);
     }
 
-    win.innerHTML = "🎉 You Win! 🎉";
+    win.innerHTML="🎉 You Win! 🎉";
   }
 }
