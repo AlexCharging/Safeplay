@@ -49,14 +49,14 @@
  
   </div>
  
-  <script>
-    // Register the service worker for offline support
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js').catch(function(err) {
-        console.log('Service worker registration failed:', err);
-      });
-    }
-  </script>
+<script>
+  // Register the service worker for offline support
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').catch(function(err) {
+      console.log('Service worker registration failed:', err);
+    });
+  }
+</script>
  
 </body>
 </html>
