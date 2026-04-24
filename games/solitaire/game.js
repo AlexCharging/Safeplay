@@ -104,3 +104,21 @@ function canPlace(card, target) {
 function getValue(v) {
   return values.indexOf(v);
 }
+
+function drawFromStock() {
+  if (!gameState.stock.length) {
+    // reset waste back into stock
+    gameState.stock = gameState.waste.reverse();
+    gameState.waste = [];
+
+    gameState.stock.forEach(c => c.faceUp = false);
+    render();
+    return;
+  }
+
+  const card = gameState.stock.pop();
+  card.faceUp = true;
+  gameState.waste.push(card);
+
+  render();
+}
