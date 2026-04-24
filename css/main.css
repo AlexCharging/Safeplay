@@ -280,3 +280,11 @@ body {
   background: #2C5F2E;
   color: white;
 }
+
+.card {
+  cursor: pointer;
+}
+
+.column {
+  padding: 6px;
+}
