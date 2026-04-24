@@ -278,29 +278,3 @@ function renderUI(state,actions){
  win.innerHTML="🎉 You Win! 🎉";
  }
 }
-```
-
----
-
-# 4) Add these at bottom of `main.css`
-
-```css
-/* drag fixes */
-.moving{
- outline:3px solid #ffd54f;
-}
-
-.card{
- cursor:grab;
-}
-
-.card:active{
- cursor:grabbing;
-}
-
-/* buttons above cards */
-#ui{
- position:relative;
- z-index:999;
- margin-top:40px;
-}
