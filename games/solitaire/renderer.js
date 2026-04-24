@@ -9,6 +9,8 @@ export function render(state, actions) {
 
 function renderStock(state, actions) {
   const stock = document.getElementById("stock");
+  if (!stock) return;
+
   stock.innerHTML = "";
 
   const back = document.createElement("div");
@@ -89,7 +91,7 @@ function renderTableau(state, actions) {
   });
 }
 
-/* ---------------- UI (WIN + CONTROLS) ---------------- */
+/* ---------------- UI ---------------- */
 
 function renderUI(state, actions) {
   let ui = document.getElementById("ui");
@@ -105,13 +107,16 @@ function renderUI(state, actions) {
     <button id="hintBtn">Hint</button>
   `;
 
-  document.getElementById("undoBtn").onclick = actions.undo;
-  document.getElementById("hintBtn").onclick = actions.hint;
+  const undoBtn = document.getElementById("undoBtn");
+  const hintBtn = document.getElementById("hintBtn");
+
+  if (undoBtn) undoBtn.onclick = actions.undo;
+  if (hintBtn) hintBtn.onclick = actions.hint;
 
   renderWin(state);
 }
 
-/* ---------------- WIN SCREEN ---------------- */
+/* ---------------- WIN ---------------- */
 
 function renderWin(state) {
   if (!state.won) return;
@@ -129,5 +134,4 @@ function renderWin(state) {
       🎉 You Win! 🎉
     </div>
   `;
-}
 }
