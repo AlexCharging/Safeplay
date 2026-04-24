@@ -1,6 +1,6 @@
 // renderer.js — builds the DOM from state
-
-import { enableDrag } from "./drag.js";
+// Uses tap-to-select / tap-to-place on mobile (no native drag API)
+// Native drag is kept for desktop as a bonus but is not relied on.
 
 export function render(state, actions){
   renderStock(state, actions);
@@ -33,11 +33,7 @@ function renderStock(state, actions){
 
   const el = document.createElement("div");
   el.className = "card back";
-
-  if(!state.stock.length){
-    el.classList.add("stock-empty");
-    el.title = "Click to recycle waste";
-  }
+  if(!state.stock.length) el.classList.add("stock-empty");
 
   el.onclick = () => actions.draw();
   stock.appendChild(el);
@@ -49,67 +45,58 @@ function renderWaste(state, actions){
   const waste = document.getElementById("waste");
   if(!waste) return;
   waste.innerHTML = "";
+  waste.style.width = "";   // reset any previous inline width
 
   if(!state.waste.length) return;
 
-  // In draw-3 mode show up to 3 fanned cards; only top is interactive
-  const showCount = state.drawMode === 3 ? Math.min(3, state.waste.length) : 1;
+  const showCount  = state.drawMode === 3 ? Math.min(3, state.waste.length) : 1;
   const startIndex = state.waste.length - showCount;
 
+  // In draw-3 we fan cards to the right; widen the waste slot accordingly
+  if(showCount > 1){
+    const cardW   = getCardWidth();
+    const fanStep = Math.round(cardW * 0.38);
+    waste.style.width = `${cardW + (showCount - 1) * fanStep}px`;
+  }
+
   for(let i = 0; i < showCount; i++){
-    const card = state.waste[startIndex + i];
+    const card  = state.waste[startIndex + i];
     const isTop = (i === showCount - 1);
 
     const el = document.createElement("div");
     el.className = "card";
-    el.style.position = "absolute";
-    el.style.left = `${i * 18}px`;
-    el.style.zIndex = i;
 
-    const hintSrc = isTop && isHintSource(state, "waste");
-    const selected = isTop && state.selected?.type === "waste";
-    if(selected) el.classList.add("selected");
-    if(hintSrc)  el.classList.add("hint-source");
+    if(showCount > 1){
+      const cardW   = getCardWidth();
+      const fanStep = Math.round(cardW * 0.38);
+      el.style.position = "absolute";
+      el.style.left = `${i * fanStep}px`;
+      el.style.zIndex = i;
+    }
+
+    if(isTop && state.selected?.type === "waste") el.classList.add("selected");
+    if(isTop && isHintSource(state, "waste"))      el.classList.add("hint-source");
 
     el.innerHTML = `<span class="card-value ${card.color}">${card.value}${card.suit}</span>`;
 
     if(isTop){
       el.onclick = () => actions.selectWaste();
-      el.ondblclick = () => {
-        actions.selectWaste();
-        actions.autoFoundation();
-      };
-      enableDrag(el, { onDragStart:() => actions.selectWaste() });
+      el.ondblclick = () => { actions.selectWaste(); actions.autoFoundation(); };
     }
 
     waste.appendChild(el);
   }
-
-  // widen waste zone for draw-3 fan
-  waste.style.width = showCount > 1 ? `${80 + (showCount-1)*18}px` : "80px";
 }
 
 /* ─── FOUNDATIONS ────────────────────────────────────────── */
 
 function renderFoundations(state, actions){
-  const foundations = document.querySelectorAll(".foundation");
-
-  foundations.forEach((f, index) => {
+  document.querySelectorAll(".foundation").forEach((f, index) => {
     f.innerHTML = "";
-
-    const hintTgt = isHintTarget(state, "foundation", index);
-    f.classList.toggle("hint-target", hintTgt);
-
-    f.addEventListener("dragover",  e => e.preventDefault());
-    f.addEventListener("drop", e => {
-      e.preventDefault();
-      if(state.selected) actions.moveFoundation(index);
-    });
+    f.classList.toggle("hint-target", isHintTarget(state, "foundation", index));
     f.onclick = () => { if(state.selected) actions.moveFoundation(index); };
 
-    const pile = state.foundations[index];
-    const top  = pile[pile.length - 1];
-
+    const top = state.foundations[index].slice(-1)[0];
     if(top){
       const el = document.createElement("div");
       el.className = "card";
@@ -122,41 +109,30 @@ function renderFoundations(state, actions){
 /* ─── TABLEAU ────────────────────────────────────────────── */
 
 function renderTableau(state, actions){
-  const cols = document.querySelectorAll(".column");
-
-  cols.forEach((colEl, colIndex) => {
+  document.querySelectorAll(".column").forEach((colEl, colIndex) => {
     colEl.innerHTML = "";
+    colEl.classList.toggle("hint-target", isHintTarget(state, "tableau", colIndex));
 
-    const hintTgt = isHintTarget(state, "tableau", colIndex);
-    colEl.classList.toggle("hint-target", hintTgt);
+    // tapping the empty column background places the selected card
+    colEl.onclick = () => { if(state.selected) actions.moveColumn(colIndex); };
 
-    // drop zone for the column background
-    colEl.addEventListener("dragover", e => e.preventDefault());
-    colEl.addEventListener("drop", e => {
-      e.preventDefault();
-      if(state.selected) actions.moveColumn(colIndex);
-    });
-
-    // clicking EMPTY column area moves selected card there
-    colEl.onclick = () => {
-      if(state.selected) actions.moveColumn(colIndex);
-    };
+    const cardW   = getCardWidth();
+    const fanStep = Math.round(cardW * 0.38);  // matches CSS --fan-step
 
     state.tableau[colIndex].forEach((card, cardIndex) => {
       const el = document.createElement("div");
       el.className = "card";
-      el.style.top    = `${cardIndex * 28}px`;
-      el.style.zIndex = cardIndex;
       el.style.position = "absolute";
+      el.style.top      = `${cardIndex * fanStep}px`;
+      el.style.zIndex   = cardIndex;
 
       const isSelected = state.selected?.type === "tableau" &&
-                         state.selected.col === colIndex &&
+                         state.selected.col   === colIndex  &&
                          state.selected.index === cardIndex;
+      const isHintSrc  = isHintSource(state, "tableau", colIndex, cardIndex);
 
-      const isHintSrc = isHintSource(state, "tableau", colIndex, cardIndex);
-
-      if(isSelected)  el.classList.add("selected");
-      if(isHintSrc)   el.classList.add("hint-source");
+      if(isSelected) el.classList.add("selected");
+      if(isHintSrc)  el.classList.add("hint-source");
 
       if(!card.faceUp){
         el.classList.add("back");
@@ -167,14 +143,8 @@ function renderTableau(state, actions){
       el.onclick = e => {
         e.stopPropagation();
         if(!card.faceUp) return;
-
-        // KEY FIX: if something is already selected, clicking THIS card
-        // should try to move the selection HERE (to this column), not re-select
-        if(state.selected){
-          actions.moveColumn(colIndex);
-        } else {
-          actions.selectTableau(colIndex, cardIndex);
-        }
+        if(state.selected) actions.moveColumn(colIndex);
+        else               actions.selectTableau(colIndex, cardIndex);
       };
 
       el.ondblclick = e => {
@@ -184,14 +154,15 @@ function renderTableau(state, actions){
         actions.autoFoundation();
       };
 
-      if(card.faceUp){
-        enableDrag(el, {
-          onDragStart:() => actions.selectTableau(colIndex, cardIndex)
-        });
-      }
-
       colEl.appendChild(el);
     });
+
+    // update column min-height so the container grows with the stack
+    const count    = state.tableau[colIndex].length;
+    const cardH    = Math.round(getCardWidth() * 1.4);
+    colEl.style.minHeight = count > 0
+      ? `${(count - 1) * fanStep + cardH}px`
+      : `${cardH}px`;
   });
 }
 
@@ -224,12 +195,23 @@ function renderUI(state, actions){
     actions.setDrawMode(state.drawMode === 1 ? 3 : 1);
   };
 
-  // win banner
-  const existing = document.getElementById("win");
-  if(state.won && !existing){
+  if(state.won && !document.getElementById("win")){
     const win = document.createElement("div");
     win.id = "win";
     win.innerHTML = `🎉 You Win! &nbsp; Final Score: ${state.score}`;
     document.getElementById("game").appendChild(win);
   }
+}
+
+/* ─── UTILITY ────────────────────────────────────────────── */
+
+// Read the computed --card-w value from CSS so JS stays in sync
+function getCardWidth(){
+  const raw = getComputedStyle(document.documentElement)
+    .getPropertyValue("--card-w").trim();
+  // raw is a calc() expression — measure an actual card element instead
+  const card = document.querySelector(".card");
+  if(card) return card.offsetWidth;
+  // fallback: parse viewport-based calc manually
+  return Math.floor((window.innerWidth - 16 - 6 * 5) / 7);
 }
