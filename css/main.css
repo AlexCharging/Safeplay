@@ -102,7 +102,15 @@ body {
   min-height: 100px;
   cursor: pointer;
 }
+.card-value.red {
+  color: #b30000; /* strong readable red */
+  font-weight: 600;
+}
 
+.card-value.black {
+  color: #111111;
+  font-weight: 600;
+}
 .game-card:hover,
 .game-card:focus {
   transform: translateY(-2px);
