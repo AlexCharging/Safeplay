@@ -4,7 +4,7 @@ export function createInitialState() {
 
   function shuffle(deck) {
     for (let i = deck.length - 1; i > 0; i--) {
-      let j = Math.floor(Math.random() * (i + 1));
+      const j = Math.floor(Math.random() * (i + 1));
       [deck[i], deck[j]] = [deck[j], deck[i]];
     }
     return deck;
@@ -14,10 +14,17 @@ export function createInitialState() {
 
   for (let s = 0; s < suits.length; s++) {
     for (let v = 0; v < values.length; v++) {
+
+      const suit = suits[s];
+
+      // ✅ TRUE SOLITAIRE COLOUR RULES
+      const color =
+        (suit === "♥" || suit === "♦") ? "red" : "black";
+
       deck.push({
-        suit: suits[s],
+        suit,
         value: values[v],
-        color: (s < 2) ? "red" : "black",
+        color,
         faceUp: false
       });
     }
@@ -41,10 +48,7 @@ export function createInitialState() {
     waste: [],
     foundations: [[],[],[],[]],
     selected: null,
-
-    history: [],          // 👈 UNDO STACK
-    hint: null,           // 👈 HINT SYSTEM
-    won: false,           // 👈 WIN STATE
-    _invalid: false
+    _invalid: false,
+    won: false
   };
 }
