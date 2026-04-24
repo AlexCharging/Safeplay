@@ -1,3 +1,5 @@
+import { enableDrag } from "./drag.js";
+
 export function render(state, actions) {
   renderStock(state, actions);
   renderWaste(state, actions);
@@ -18,7 +20,6 @@ function renderStock(state, actions) {
 
   const back = document.createElement("div");
   back.className = "card back";
-
   back.onclick = () => actions.draw();
 
   stock.appendChild(back);
@@ -26,67 +27,111 @@ function renderStock(state, actions) {
 
 /* ---------- WASTE ---------- */
 
-function renderWaste(state, actions){
+function renderWaste(state, actions) {
   const waste = document.getElementById("waste");
-  if(!waste) return;
+  if (!waste) return;
 
-  waste.innerHTML="";
+  waste.innerHTML = "";
 
-  const card = state.waste[state.waste.length-1];
-  if(!card) return;
+  const card = state.waste[state.waste.length - 1];
+  if (!card) return;
 
-  const el=document.createElement("div");
-  el.className="card";
+  const el = document.createElement("div");
+  el.className = "card";
 
-  el.innerHTML=`
+  if (state.selected?.type === "waste") {
+    el.classList.add("selected");
+  }
+
+  el.innerHTML = `
     <span class="card-value ${card.color}">
       ${card.value}${card.suit}
     </span>
   `;
 
-  el.onclick=()=>actions.selectWaste();
+  el.onclick = () => actions.selectWaste();
+
+  enableDrag(el, {
+    onDragStart: () => actions.selectWaste()
+  });
 
   waste.appendChild(el);
 }
 
 /* ---------- TABLEAU ---------- */
 
-function renderTableau(state, actions){
-  const cols=document.querySelectorAll(".column");
+function renderTableau(state, actions) {
 
-  cols.forEach((col,colIndex)=>{
+  const cols = document.querySelectorAll(".column");
 
-    col.innerHTML="";
+  cols.forEach((col, colIndex) => {
 
-    state.tableau[colIndex].forEach((card,cardIndex)=>{
+    col.innerHTML = "";
 
-      const el=document.createElement("div");
-      el.className="card";
+    enableDrag(col, {
+      onDrop: () => {
+        if (state.selected) {
+          actions.moveColumn(colIndex);
+        }
+      }
+    });
 
-      el.style.top=`${cardIndex*24}px`;
-      el.style.zIndex=cardIndex;
+    state.tableau[colIndex].forEach((card, cardIndex) => {
 
-      if(!card.faceUp){
+      const el = document.createElement("div");
+      el.className = "card";
+
+      el.style.top = `${cardIndex * 24}px`;
+      el.style.zIndex = cardIndex;
+
+      if (
+        state.selected &&
+        state.selected.type === "tableau" &&
+        state.selected.col === colIndex &&
+        state.selected.index === cardIndex
+      ) {
+        el.classList.add("selected");
+      }
+
+      if (!card.faceUp) {
         el.classList.add("back");
-      } else{
-        el.innerHTML=`
+      }
+      else {
+        el.innerHTML = `
           <span class="card-value ${card.color}">
             ${card.value}${card.suit}
           </span>
         `;
       }
 
-      el.onclick=(e)=>{
+      el.onclick = (e) => {
         e.stopPropagation();
-        if(!card.faceUp) return;
-        actions.selectTableau(colIndex,cardIndex);
+
+        if (!card.faceUp) return;
+
+        actions.selectTableau(
+          colIndex,
+          cardIndex
+        );
       };
 
+      if (card.faceUp) {
+        enableDrag(el, {
+          onDragStart: () => {
+            actions.selectTableau(
+              colIndex,
+              cardIndex
+            );
+          }
+        });
+      }
+
       col.appendChild(el);
+
     });
 
-    col.onclick=()=>{
-      if(!state.selected) return;
+    col.onclick = () => {
+      if (!state.selected) return;
       actions.moveColumn(colIndex);
     };
 
@@ -95,31 +140,41 @@ function renderTableau(state, actions){
 
 /* ---------- FOUNDATIONS ---------- */
 
-function renderFoundations(state,actions){
-  const foundations=document.querySelectorAll(".foundation");
+function renderFoundations(state, actions) {
 
-  foundations.forEach((f,index)=>{
+  const foundations =
+    document.querySelectorAll(".foundation");
 
-    f.innerHTML="";
+  foundations.forEach((f, index) => {
 
-    const pile=state.foundations[index];
-    const top=pile[pile.length-1];
+    f.innerHTML = "";
 
-    if(top){
-      const el=document.createElement("div");
-      el.className="card";
+    enableDrag(f, {
+      onDrop: () => {
+        if (state.selected) {
+          actions.moveFoundation(index);
+        }
+      }
+    });
 
-      el.innerHTML=`
+    const pile = state.foundations[index];
+    const top = pile[pile.length - 1];
+
+    if (top) {
+      const el = document.createElement("div");
+      el.className = "card";
+
+      el.innerHTML = `
         <span class="card-value ${top.color}">
-          ${top.value}${top.suit}
+         ${top.value}${top.suit}
         </span>
       `;
 
       f.appendChild(el);
     }
 
-    f.onclick=()=>{
-      if(!state.selected) return;
+    f.onclick = () => {
+      if (!state.selected) return;
       actions.moveFoundation(index);
     };
 
@@ -128,33 +183,44 @@ function renderFoundations(state,actions){
 
 /* ---------- UI ---------- */
 
-function renderUI(state,actions){
+function renderUI(state, actions) {
 
-  let ui=document.getElementById("ui");
+  let ui = document.getElementById("ui");
 
-  if(!ui){
-    ui=document.createElement("div");
-    ui.id="ui";
+  if (!ui) {
+    ui = document.createElement("div");
+    ui.id = "ui";
 
-    document.getElementById("game").appendChild(ui);
+    document
+      .getElementById("game")
+      .appendChild(ui);
   }
 
-  ui.innerHTML=`
-    <button id="undoBtn">Undo</button>
-    <button id="hintBtn">Hint</button>
+  ui.innerHTML = `
+   <button id="undoBtn">Undo</button>
+   <button id="hintBtn">Hint</button>
   `;
 
-  document.getElementById("undoBtn").onclick=actions.undo;
-  document.getElementById("hintBtn").onclick=actions.hint;
+  document.getElementById(
+    "undoBtn"
+  ).onclick = actions.undo;
 
-  if(state.won){
+  document.getElementById(
+    "hintBtn"
+  ).onclick = actions.hint;
 
-    let win=document.getElementById("win");
+  if (state.won) {
 
-    if(!win){
+    let win=
+      document.getElementById("win");
+
+    if (!win) {
       win=document.createElement("div");
       win.id="win";
-      document.getElementById("game").appendChild(win);
+
+      document
+       .getElementById("game")
+       .appendChild(win);
     }
 
     win.innerHTML="🎉 You Win! 🎉";
