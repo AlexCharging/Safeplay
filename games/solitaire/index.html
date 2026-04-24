@@ -3,34 +3,42 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
   <title>Solitaire — SafePlay</title>
   <link rel="stylesheet" href="../../css/main.css" />
+  <link rel="stylesheet" href="solitaire.css" />
 </head>
-
 <body>
 
   <div class="solitaire-page">
 
-    <a href="../../index.html" class="back-btn">← Back to games</a>
-
-    <h2 class="game-title">Solitaire</h2>
+    <div class="page-header">
+      <a href="../../index.html" class="back-btn">&#8592; Games</a>
+      <h1 class="game-title">♠ Solitaire</h1>
+    </div>
 
     <div id="game">
 
+      <!-- Top row: stock/waste on left, foundations on right -->
       <div id="top-row">
 
-        <div id="stock" class="pile"></div>
-        <div id="waste" class="pile"></div>
+        <div id="stock-waste">
+          <div id="stock"></div>
+          <div id="waste"></div>
+        </div>
+
+        <div id="spacer"></div>
 
         <div id="foundations">
-          <div class="foundation" data-f="0"></div>
-          <div class="foundation" data-f="1"></div>
-          <div class="foundation" data-f="2"></div>
-          <div class="foundation" data-f="3"></div>
+          <div class="foundation" data-index="0"></div>
+          <div class="foundation" data-index="1"></div>
+          <div class="foundation" data-index="2"></div>
+          <div class="foundation" data-index="3"></div>
         </div>
 
       </div>
 
+      <!-- Tableau: 7 columns -->
       <div id="tableau">
         <div class="column" data-col="0"></div>
         <div class="column" data-col="1"></div>
@@ -41,11 +49,11 @@
         <div class="column" data-col="6"></div>
       </div>
 
-    </div>
+    </div><!-- #game -->
 
-  </div>
+  </div><!-- .solitaire-page -->
 
-<script type="module" src="solitaire.js"></script>
+  <script type="module" src="solitaire.js"></script>
 
 </body>
 </html>
