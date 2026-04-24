@@ -50,4 +50,3 @@ export function createController(state) {
 
   return actions;
 }
-}
