@@ -2,6 +2,16 @@ export function render(state, actions) {
   renderStock(state, actions);
   renderWaste(state, actions);
   renderTableau(state, actions);
+
+  // reset invalid flag AFTER render
+  state._invalid = false;
+
+  // clear animation markers
+  state.tableau.forEach(col =>
+    col.forEach(c => delete c._moving)
+  );
+
+  state.waste.forEach(c => delete c._moving);
 }
 
 function renderStock(state, actions) {
@@ -44,29 +54,38 @@ function renderTableau(state, actions) {
 
       if (!card.faceUp) {
         el.classList.add("back");
-        el.textContent = "";
       } else {
         el.textContent = card.value + card.suit;
       }
 
-      const isSelected =
-        state.selected &&
-        state.selected.type === "tableau" &&
-        state.selected.colIndex === colIndex &&
-        state.selected.cardIndex === cardIndex;
-
-      if (isSelected) {
+      if (state.selected &&
+          state.selected.type === "tableau" &&
+          state.selected.colIndex === colIndex &&
+          state.selected.cardIndex === cardIndex) {
         el.classList.add("selected");
+      }
+
+      if (card._moving) {
+        el.classList.add("moving");
       }
 
       el.onclick = (e) => {
         e.stopPropagation();
+        if (!card.faceUp) return;
         actions.selectTableau(colIndex, cardIndex);
       };
 
       col.appendChild(el);
     });
 
-    col.onclick = () => actions.move(colIndex);
+    col.onclick = () => {
+      if (!state.selected) return;
+      actions.move(colIndex);
+    };
+
+    if (state._invalid) {
+      col.classList.add("invalid-flash");
+      setTimeout(() => col.classList.remove("invalid-flash"), 200);
+    }
   });
 }
