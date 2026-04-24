@@ -29,7 +29,7 @@ export function createInitialState() {
 
   for (let i = 0; i < 7; i++) {
     for (let j = 0; j <= i; j++) {
-      let card = deck.pop();
+      const card = deck.pop();
       if (j === i) card.faceUp = true;
       tableau[i].push(card);
     }
@@ -41,6 +41,10 @@ export function createInitialState() {
     waste: [],
     foundations: [[],[],[],[]],
     selected: null,
+
+    history: [],          // 👈 UNDO STACK
+    hint: null,           // 👈 HINT SYSTEM
+    won: false,           // 👈 WIN STATE
     _invalid: false
   };
 }
