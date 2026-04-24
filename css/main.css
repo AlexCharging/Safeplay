@@ -6,36 +6,36 @@
    - Generous touch targets (minimum 44px tall)
    - Simple, calm layout with no distractions
    ============================================= */
- 
-/* --- Google Font (loaded from Google — remove if fully offline needed) --- */
+
+/* --- Google Font --- */
 @import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;600&family=Source+Sans+3:wght@400;600&display=swap');
- 
-/* --- CSS Variables (easy to change the whole colour scheme here) --- */
+
+/* --- CSS Variables --- */
 :root {
-  --bg:           #F5F0E8;   /* warm cream background — easy on the eyes */
-  --surface:      #FFFFFF;   /* white cards */
-  --primary:      #2C5F2E;   /* deep green — calm, trustworthy */
+  --bg:           #F5F0E8;
+  --surface:      #FFFFFF;
+  --primary:      #2C5F2E;
   --primary-dark: #1A3D1B;
-  --accent:       #8B1A1A;   /* deep red for Solitaire card suits */
-  --text:         #1A1A1A;   /* near-black for maximum readability */
+  --accent:       #8B1A1A;
+  --text:         #1A1A1A;
   --text-muted:   #555555;
   --border:       #D0C8B8;
   --radius:       16px;
   --shadow:       0 4px 20px rgba(0,0,0,0.10);
 }
- 
-/* --- Reset & Base --- */
+
+/* --- Reset --- */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
- 
+
 html {
-  font-size: 18px; /* base size — larger than usual for readability */
+  font-size: 18px;
   -webkit-text-size-adjust: 100%;
 }
- 
+
 body {
   font-family: 'Source Sans 3', 'Helvetica Neue', sans-serif;
   background-color: var(--bg);
@@ -43,8 +43,8 @@ body {
   min-height: 100vh;
   line-height: 1.6;
 }
- 
-/* --- Home Screen Layout --- */
+
+/* --- Home Screen --- */
 .home-screen {
   max-width: 480px;
   margin: 0 auto;
@@ -53,44 +53,40 @@ body {
   flex-direction: column;
   min-height: 100vh;
 }
- 
-/* --- Header --- */
+
 .home-header {
   text-align: center;
   margin-bottom: 48px;
 }
- 
+
 .logo {
   font-size: 56px;
   line-height: 1;
   margin-bottom: 12px;
   color: var(--primary);
 }
- 
+
 .home-header h1 {
   font-family: 'Lora', Georgia, serif;
-  font-size: 2.4rem;   /* ~43px */
+  font-size: 2.4rem;
   font-weight: 600;
   color: var(--primary);
-  letter-spacing: -0.5px;
   margin-bottom: 8px;
 }
- 
+
 .tagline {
   font-size: 1rem;
   color: var(--text-muted);
-  letter-spacing: 0.3px;
 }
- 
-/* --- Game Cards Grid --- */
+
+/* --- Game Cards --- */
 .game-grid {
   display: flex;
   flex-direction: column;
   gap: 20px;
   flex: 1;
 }
- 
-/* --- Individual Game Card --- */
+
 .game-card {
   display: flex;
   align-items: center;
@@ -103,115 +99,30 @@ body {
   color: var(--text);
   box-shadow: var(--shadow);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
-  min-height: 100px; /* generous touch target */
+  min-height: 100px;
   cursor: pointer;
 }
- 
+
 .game-card:hover,
 .game-card:focus {
   transform: translateY(-2px);
   box-shadow: 0 8px 28px rgba(0,0,0,0.14);
   outline: 3px solid var(--primary);
-  outline-offset: 2px;
 }
- 
+
 .game-card:active {
   transform: translateY(0px);
 }
- 
-/* Solitaire card accent */
+
 #card-solitaire {
   border-left: 6px solid var(--accent);
 }
- 
-/* Sudoku card accent */
+
 #card-sudoku {
   border-left: 6px solid var(--primary);
 }
- 
-.game-icon {
-  font-size: 2.4rem;
-  width: 56px;
-  text-align: center;
-  flex-shrink: 0;
-  line-height: 1;
-}
- 
-.game-info {
-  flex: 1;
-}
- 
-.game-info h2 {
-  font-family: 'Lora', Georgia, serif;
-  font-size: 1.5rem;   /* ~27px */
-  font-weight: 600;
-  margin-bottom: 4px;
-  color: var(--text);
-}
- 
-.game-info p {
-  font-size: 0.95rem;
-  color: var(--text-muted);
-}
- 
-.game-arrow {
-  font-size: 2rem;
-  color: var(--border);
-  flex-shrink: 0;
-}
- 
-/* --- Footer --- */
-.home-footer {
-  text-align: center;
-  margin-top: 40px;
-  padding-top: 20px;
-  border-top: 1px solid var(--border);
-}
- 
-.home-footer p {
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  letter-spacing: 0.2px;
-}
- 
-/* --- Utility: back button (used inside game pages) --- */
-.back-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: none;
-  border: 2px solid var(--border);
-  border-radius: 10px;
-  padding: 10px 18px;
-  font-size: 1rem;
-  font-family: inherit;
-  color: var(--text-muted);
-  cursor: pointer;
-  text-decoration: none;
-  transition: border-color 0.15s, color 0.15s;
-  min-height: 44px; /* iOS minimum touch target */
-}
- 
-.back-btn:hover {
-  border-color: var(--primary);
-  color: var(--primary);
-}
- 
-/* --- Responsive: larger screens get a bit more breathing room --- */
-@media (min-width: 600px) {
-  .home-screen {
-    padding: 60px 32px 40px;
-  }
-  .game-card {
-    padding: 32px 28px;
-  }
-}
 
-
-/* =========================
-   SAFEPLAY SOLITAIRE
-   ========================= */
-
+/* --- Game Page Layout --- */
 .solitaire-page {
   max-width: 520px;
   margin: 0 auto;
@@ -220,7 +131,7 @@ body {
 
 .game-title {
   margin-top: 20px;
-  color: #2C5F2E;
+  color: var(--primary);
   font-family: sans-serif;
 }
 
@@ -228,11 +139,10 @@ body {
   margin-top: 20px;
 }
 
-/* TOP ROW */
+/* --- Layout --- */
 #top-row {
   display: flex;
   gap: 10px;
-  align-items: flex-start;
   margin-bottom: 20px;
 }
 
@@ -242,7 +152,7 @@ body {
   margin-left: auto;
 }
 
-/* PILES */
+/* --- Piles --- */
 .pile,
 .foundation,
 .column {
@@ -253,14 +163,14 @@ body {
   background: #f9f9f9;
 }
 
-/* TABLEAU */
+/* --- Tableau --- */
 #tableau {
   display: flex;
   gap: 10px;
   justify-content: center;
 }
 
-/* CARDS */
+/* --- Cards --- */
 .card {
   width: 100%;
   height: 26px;
@@ -274,35 +184,59 @@ body {
   font-size: 12px;
   user-select: none;
   cursor: pointer;
+
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.card.back {
+  background: var(--primary);
+  color: white;
+}
+
+/* --- STATE STYLES --- */
+.card.selected {
+  outline: 3px solid var(--primary);
 }
 
 .card.invalid-flash {
   animation: shake 0.2s ease;
 }
 
-.card.selected {
-  outline: 3px solid var(--primary);
-}
-/* BACK OF CARD */
-.card.back {
-  background: #2C5F2E;
-  color: white;
+.card.moving {
+  transform: translateY(-6px) scale(1.05);
+  opacity: 0.7;
 }
 
-.column {
-  padding: 6px;
-}
-
-#stock, #waste {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
+/* --- Animation --- */
 @keyframes shake {
   0% { transform: translateX(0); }
   25% { transform: translateX(-4px); }
   50% { transform: translateX(4px); }
   75% { transform: translateX(-4px); }
   100% { transform: translateX(0); }
+}
+
+/* --- Utility --- */
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-size: 1rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  min-height: 44px;
+}
+
+/* --- Responsive --- */
+@media (min-width: 600px) {
+  .home-screen {
+    padding: 60px 32px 40px;
+  }
+
+  .game-card {
+    padding: 32px 28px;
+  }
 }
