@@ -36,7 +36,12 @@ function renderWaste(state, actions) {
 
   const el = document.createElement("div");
   el.className = "card";
-  el.textContent = card.value + card.suit;
+
+  el.innerHTML = `
+    <span class="card-value ${card.color}">
+      ${card.value}${card.suit}
+    </span>
+  `;
 
   el.onclick = () => actions.selectWaste();
 
@@ -57,18 +62,12 @@ function renderTableau(state, actions) {
 
       if (!card.faceUp) {
         el.classList.add("back");
-        el.textContent = "";
       } else {
-        el.textContent = card.value + card.suit;
-      }
-
-      if (
-        state.selected &&
-        state.selected.type === "tableau" &&
-        state.selected.col === colIndex &&
-        state.selected.index === cardIndex
-      ) {
-        el.classList.add("selected");
+        el.innerHTML = `
+          <span class="card-value ${card.color}">
+            ${card.value}${card.suit}
+          </span>
+        `;
       }
 
       el.onclick = (e) => {
@@ -83,7 +82,7 @@ function renderTableau(state, actions) {
     col.onclick = () => {
       if (!state.selected) return;
       actions.moveColumn(colIndex);
-    };
+    });
   });
 }
 
@@ -101,7 +100,13 @@ function renderFoundations(state, actions) {
     if (top) {
       const el = document.createElement("div");
       el.className = "card";
-      el.textContent = top.value + top.suit;
+
+      el.innerHTML = `
+        <span class="card-value ${top.color}">
+          ${top.value}${top.suit}
+        </span>
+      `;
+
       f.appendChild(el);
     }
 
