@@ -288,3 +288,9 @@ body {
 .column {
   padding: 6px;
 }
+
+#stock, #waste {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
