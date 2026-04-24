@@ -71,7 +71,8 @@ function renderTableau() {
 
     // allow clicking column to move card
     col.onclick = () => {
-      moveCard(colIndex);
+  if (!selected) return;
+  moveCard(colIndex);
     };
   });
 }
