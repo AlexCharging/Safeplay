@@ -19,9 +19,15 @@ export function createController(state) {
       render(state, actions);
     },
 
-    move: (col) => {
-      moveToColumn(state, col);
-      render(state, actions);
+move: (col) => {
+  const ok = moveToColumn(state, col);
+
+  if (!ok) {
+    state._invalid = true;
+  }
+
+  render(state, actions);
+}
     },
 
     draw: () => {
