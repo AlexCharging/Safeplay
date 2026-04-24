@@ -4,6 +4,10 @@ function getValue(v) {
   return values.indexOf(v);
 }
 
+/* ---------------------------
+   MOVE RULES
+---------------------------- */
+
 function canPlaceTableau(card, target) {
   if (!target) return card.value === "K";
   if (card.color === target.color) return false;
@@ -12,16 +16,31 @@ function canPlaceTableau(card, target) {
 
 function canPlaceFoundation(card, foundation) {
   if (!foundation.length) return card.value === "A";
+
   const top = foundation[foundation.length - 1];
-  return card.suit === top.suit &&
-         getValue(card.value) === getValue(top.value) + 1;
+
+  return (
+    card.suit === top.suit &&
+    getValue(card.value) === getValue(top.value) + 1
+  );
 }
 
-/* ---------------- HISTORY SYSTEM ---------------- */
+/* ---------------------------
+   HISTORY (UNDO SUPPORT)
+---------------------------- */
 
 function saveState(state) {
-  state.history.push(JSON.stringify(state));
-  if (state.history.length > 30) state.history.shift();
+  state.history.push(JSON.stringify({
+    tableau: state.tableau,
+    stock: state.stock,
+    waste: state.waste,
+    foundations: state.foundations,
+    selected: null
+  }));
+
+  if (state.history.length > 30) {
+    state.history.shift();
+  }
 }
 
 export function undo(state) {
@@ -29,38 +48,80 @@ export function undo(state) {
 
   const prev = JSON.parse(state.history.pop());
 
-  Object.assign(state, prev);
+  state.tableau = prev.tableau;
+  state.stock = prev.stock;
+  state.waste = prev.waste;
+  state.foundations = prev.foundations;
+  state.selected = null;
 }
 
-/* ---------------- AUTO MOVE ---------------- */
+/* ---------------------------
+   SELECTION (FIXED EXPORTS)
+---------------------------- */
 
-function tryAutoFoundation(state, card, fromTableau = null, fromWaste = false) {
-  for (let i = 0; i < 4; i++) {
-    if (canPlaceFoundation(card, state.foundations[i])) {
-      state.foundations[i].push(card);
+export function selectTableau(state, col, index) {
+  const card = state.tableau[col][index];
+  if (!card || !card.faceUp) return;
 
-      if (fromWaste) state.waste.pop();
-      if (fromTableau) {
-        fromTableau.splice(fromTableau.indexOf(card), 1);
-        if (fromTableau.length) {
-          fromTableau[fromTableau.length - 1].faceUp = true;
+  state.selected = {
+    type: "tableau",
+    col,
+    index
+  };
+}
+
+export function selectWaste(state) {
+  if (!state.waste.length) return;
+
+  state.selected = {
+    type: "waste"
+  };
+}
+
+export function clearSelection(state) {
+  state.selected = null;
+}
+
+/* ---------------------------
+   AUTO MOVE TO FOUNDATION
+---------------------------- */
+
+function tryAutoFoundation(state, card, fromCol = null, fromWaste = false) {
+  for (let i = 0; i < state.foundations.length; i++) {
+    const foundation = state.foundations[i];
+
+    if (canPlaceFoundation(card, foundation)) {
+      foundation.push(card);
+
+      if (fromWaste) {
+        state.waste.pop();
+      }
+
+      if (fromCol) {
+        fromCol.splice(fromCol.indexOf(card), 1);
+
+        if (fromCol.length) {
+          fromCol[fromCol.length - 1].faceUp = true;
         }
       }
 
       return true;
     }
   }
+
   return false;
 }
 
-/* ---------------- STOCK ---------------- */
+/* ---------------------------
+   STOCK / WASTE
+---------------------------- */
 
 export function drawFromStock(state) {
   saveState(state);
 
   if (!state.stock.length) {
     state.stock = state.waste.reverse();
-    state.stock.forEach(c => c.faceUp = false);
+    state.stock.forEach(c => (c.faceUp = false));
     state.waste = [];
     return;
   }
@@ -72,7 +133,9 @@ export function drawFromStock(state) {
   tryAutoFoundation(state, card, null, true);
 }
 
-/* ---------------- MOVE ---------------- */
+/* ---------------------------
+   MOVE TO TABLEAU
+---------------------------- */
 
 export function moveToColumn(state, toCol) {
   if (!state.selected) return false;
@@ -82,6 +145,7 @@ export function moveToColumn(state, toCol) {
   const targetCol = state.tableau[toCol];
   const targetTop = targetCol[targetCol.length - 1];
 
+  /* TABLEAU → TABLEAU */
   if (state.selected.type === "tableau") {
     const fromCol = state.tableau[state.selected.col];
     const moving = fromCol.slice(state.selected.index);
@@ -95,6 +159,7 @@ export function moveToColumn(state, toCol) {
     tryAutoFoundation(state, card, fromCol);
   }
 
+  /* WASTE → TABLEAU */
   if (state.selected.type === "waste") {
     const card = state.waste[state.waste.length - 1];
 
@@ -106,13 +171,15 @@ export function moveToColumn(state, toCol) {
     tryAutoFoundation(state, card, null, true);
   }
 
-  state.selected = null;
+  clearSelection(state);
   checkWin(state);
 
   return true;
 }
 
-/* ---------------- HINT SYSTEM ---------------- */
+/* ---------------------------
+   HINT SYSTEM
+---------------------------- */
 
 export function findHint(state) {
   for (let c = 0; c < 7; c++) {
@@ -121,9 +188,10 @@ export function findHint(state) {
 
       for (let t = 0; t < 7; t++) {
         if (c === t) continue;
-        const top = state.tableau[t].slice(-1)[0];
 
-        if (canPlaceTableau(card, top)) {
+        const targetTop = state.tableau[t][state.tableau[t].length - 1];
+
+        if (canPlaceTableau(card, targetTop)) {
           state.hint = { from: c, index: i, to: t };
           return state.hint;
         }
@@ -131,10 +199,13 @@ export function findHint(state) {
     }
   }
 
+  state.hint = null;
   return null;
 }
 
-/* ---------------- WIN ---------------- */
+/* ---------------------------
+   WIN CONDITION
+---------------------------- */
 
 export function checkWin(state) {
   const won = state.foundations.every(f => f.length === 13);
