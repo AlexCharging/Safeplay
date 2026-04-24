@@ -2,13 +2,16 @@ import {
   selectTableau,
   selectWaste,
   moveToColumn,
-  drawFromStock
+  drawFromStock,
+  undo,
+  findHint
 } from "./engine.js";
 
 import { render } from "./renderer.js";
 
 export function createController(state) {
   const actions = {
+
     selectTableau: (c, i) => {
       selectTableau(state, c, i);
       render(state, actions);
@@ -19,18 +22,24 @@ export function createController(state) {
       render(state, actions);
     },
 
-    move: (col) => {
+    moveColumn: (col) => {
       const ok = moveToColumn(state, col);
-
-      if (!ok) {
-        state._invalid = true;
-      }
-
+      if (!ok) state._invalid = true;
       render(state, actions);
     },
 
     draw: () => {
       drawFromStock(state);
+      render(state, actions);
+    },
+
+    undo: () => {
+      undo(state);
+      render(state, actions);
+    },
+
+    hint: () => {
+      findHint(state);
       render(state, actions);
     }
   };
