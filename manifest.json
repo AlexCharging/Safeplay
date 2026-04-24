@@ -2,7 +2,7 @@
   "name": "SafePlay",
   "short_name": "SafePlay",
   "description": "Safe, simple games — Solitaire and Sudoku",
-  "start_url": "/",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#F5F0E8",
   "theme_color": "#2C5F2E",
