@@ -10,19 +10,19 @@ export function render(state,actions){
 
 /* ---------- STOCK ---------- */
 
-function renderStock(state,actions){
+function renderStock(state, actions){
 
- const stock=
-  document.getElementById("stock");
-
+ const stock=document.getElementById("stock");
  if(!stock) return;
 
  stock.innerHTML="";
 
- if(!state.stock.length) return;
-
  const back=document.createElement("div");
  back.className="card back";
+
+ if(!state.stock.length){
+   back.style.opacity=".35";   // visual empty stock
+ }
 
  back.onclick=()=>actions.draw();
 
