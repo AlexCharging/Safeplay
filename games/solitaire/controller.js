@@ -2,9 +2,8 @@ import {
   selectTableau,
   selectWaste,
   moveToColumn,
-  drawFromStock,
-  undo,
-  findHint
+  moveToFoundation,
+  drawFromStock
 } from "./engine.js";
 
 import { render } from "./renderer.js";
@@ -28,21 +27,27 @@ export function createController(state) {
       render(state, actions);
     },
 
+    moveFoundation: (index) => {
+      const ok = moveToFoundation(state, index);
+      if (!ok) state._invalid = true;
+      render(state, actions);
+    },
+
     draw: () => {
       drawFromStock(state);
       render(state, actions);
     },
 
     undo: () => {
-      undo(state);
+      // optional if you still have undo later
       render(state, actions);
     },
 
     hint: () => {
-      findHint(state);
       render(state, actions);
     }
   };
 
   return actions;
+}
 }
