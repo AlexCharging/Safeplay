@@ -1,5 +1,6 @@
+const values = ["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
+
 export function getValue(v) {
-  const values = ["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
   return values.indexOf(v);
 }
 
@@ -26,12 +27,19 @@ export function selectTableau(state, colIndex, cardIndex) {
   const card = state.tableau[colIndex][cardIndex];
   if (!card || !card.faceUp) return;
 
-  state.selected = { type: "tableau", colIndex, cardIndex };
+  state.selected = {
+    type: "tableau",
+    colIndex,
+    cardIndex
+  };
 }
 
 export function selectWaste(state) {
   if (!state.waste.length) return;
-  state.selected = { type: "waste" };
+
+  state.selected = {
+    type: "waste"
+  };
 }
 
 export function moveToColumn(state, toCol) {
@@ -40,7 +48,7 @@ export function moveToColumn(state, toCol) {
   const targetCol = state.tableau[toCol];
   const targetTop = targetCol[targetCol.length - 1];
 
-  // FROM TABLEAU
+  // TABLEAU MOVE
   if (state.selected.type === "tableau") {
     const fromCol = state.tableau[state.selected.colIndex];
     const moving = fromCol.slice(state.selected.cardIndex);
@@ -50,17 +58,21 @@ export function moveToColumn(state, toCol) {
       return false;
     }
 
+    moving.forEach(c => c._moving = true);
+
     fromCol.splice(state.selected.cardIndex);
     targetCol.push(...moving);
   }
 
-  // FROM WASTE
+  // WASTE MOVE
   if (state.selected.type === "waste") {
     const card = state.waste[state.waste.length - 1];
 
     if (!canPlace(card, targetTop)) {
       return false;
     }
+
+    card._moving = true;
 
     state.waste.pop();
     targetCol.push(card);
