@@ -4,9 +4,7 @@ function getValue(v) {
   return values.indexOf(v);
 }
 
-/* ---------------------------
-   MOVE RULES
----------------------------- */
+/* ---------------- RULES ---------------- */
 
 function canPlaceTableau(card, target) {
   if (!target) return card.value === "K";
@@ -25,39 +23,7 @@ function canPlaceFoundation(card, foundation) {
   );
 }
 
-/* ---------------------------
-   HISTORY (UNDO SUPPORT)
----------------------------- */
-
-function saveState(state) {
-  state.history.push(JSON.stringify({
-    tableau: state.tableau,
-    stock: state.stock,
-    waste: state.waste,
-    foundations: state.foundations,
-    selected: null
-  }));
-
-  if (state.history.length > 30) {
-    state.history.shift();
-  }
-}
-
-export function undo(state) {
-  if (!state.history.length) return;
-
-  const prev = JSON.parse(state.history.pop());
-
-  state.tableau = prev.tableau;
-  state.stock = prev.stock;
-  state.waste = prev.waste;
-  state.foundations = prev.foundations;
-  state.selected = null;
-}
-
-/* ---------------------------
-   SELECTION (FIXED EXPORTS)
----------------------------- */
+/* ---------------- SELECTION ---------------- */
 
 export function selectTableau(state, col, index) {
   const card = state.tableau[col][index];
@@ -78,47 +44,9 @@ export function selectWaste(state) {
   };
 }
 
-export function clearSelection(state) {
-  state.selected = null;
-}
-
-/* ---------------------------
-   AUTO MOVE TO FOUNDATION
----------------------------- */
-
-function tryAutoFoundation(state, card, fromCol = null, fromWaste = false) {
-  for (let i = 0; i < state.foundations.length; i++) {
-    const foundation = state.foundations[i];
-
-    if (canPlaceFoundation(card, foundation)) {
-      foundation.push(card);
-
-      if (fromWaste) {
-        state.waste.pop();
-      }
-
-      if (fromCol) {
-        fromCol.splice(fromCol.indexOf(card), 1);
-
-        if (fromCol.length) {
-          fromCol[fromCol.length - 1].faceUp = true;
-        }
-      }
-
-      return true;
-    }
-  }
-
-  return false;
-}
-
-/* ---------------------------
-   STOCK / WASTE
----------------------------- */
+/* ---------------- STOCK ---------------- */
 
 export function drawFromStock(state) {
-  saveState(state);
-
   if (!state.stock.length) {
     state.stock = state.waste.reverse();
     state.stock.forEach(c => (c.faceUp = false));
@@ -129,83 +57,95 @@ export function drawFromStock(state) {
   const card = state.stock.pop();
   card.faceUp = true;
   state.waste.push(card);
-
-  tryAutoFoundation(state, card, null, true);
 }
 
-/* ---------------------------
-   MOVE TO TABLEAU
----------------------------- */
+/* ---------------- MOVE TO TABLEAU ---------------- */
 
 export function moveToColumn(state, toCol) {
   if (!state.selected) return false;
 
-  saveState(state);
-
   const targetCol = state.tableau[toCol];
   const targetTop = targetCol[targetCol.length - 1];
 
+  let card;
+  let sourceCol = null;
+
   /* TABLEAU → TABLEAU */
   if (state.selected.type === "tableau") {
-    const fromCol = state.tableau[state.selected.col];
-    const moving = fromCol.slice(state.selected.index);
-    const card = moving[0];
+    sourceCol = state.tableau[state.selected.col];
+    const moving = sourceCol.slice(state.selected.index);
+    card = moving[0];
 
-    if (!canPlaceTableau(card, targetTop)) return false;
+    if (targetTop) {
+      if (!canPlaceTableau(card, targetTop)) return false;
+    } else {
+      if (card.value !== "K") return false;
+    }
 
-    fromCol.splice(state.selected.index);
+    sourceCol.splice(state.selected.index);
     targetCol.push(...moving);
 
-    tryAutoFoundation(state, card, fromCol);
+    if (sourceCol.length) {
+      sourceCol[sourceCol.length - 1].faceUp = true;
+    }
   }
 
   /* WASTE → TABLEAU */
   if (state.selected.type === "waste") {
-    const card = state.waste[state.waste.length - 1];
+    card = state.waste[state.waste.length - 1];
 
-    if (!canPlaceTableau(card, targetTop)) return false;
+    if (targetTop) {
+      if (!canPlaceTableau(card, targetTop)) return false;
+    } else {
+      if (card.value !== "K") return false;
+    }
 
     state.waste.pop();
     targetCol.push(card);
-
-    tryAutoFoundation(state, card, null, true);
   }
 
-  clearSelection(state);
+  state.selected = null;
   checkWin(state);
-
   return true;
 }
 
-/* ---------------------------
-   HINT SYSTEM
----------------------------- */
+/* ---------------- FOUNDATION MOVE ---------------- */
 
-export function findHint(state) {
-  for (let c = 0; c < 7; c++) {
-    for (let i = 0; i < state.tableau[c].length; i++) {
-      const card = state.tableau[c][i];
+export function moveToFoundation(state, index) {
+  if (!state.selected) return false;
 
-      for (let t = 0; t < 7; t++) {
-        if (c === t) continue;
+  const foundation = state.foundations[index];
+  let card;
 
-        const targetTop = state.tableau[t][state.tableau[t].length - 1];
+  if (state.selected.type === "waste") {
+    card = state.waste[state.waste.length - 1];
 
-        if (canPlaceTableau(card, targetTop)) {
-          state.hint = { from: c, index: i, to: t };
-          return state.hint;
-        }
-      }
+    if (!canPlaceFoundation(card, foundation)) return false;
+
+    state.waste.pop();
+  }
+
+  if (state.selected.type === "tableau") {
+    const col = state.tableau[state.selected.col];
+    card = col[state.selected.index];
+
+    if (!canPlaceFoundation(card, foundation)) return false;
+
+    col.splice(state.selected.index);
+
+    if (col.length) {
+      col[col.length - 1].faceUp = true;
     }
   }
 
-  state.hint = null;
-  return null;
+  foundation.push(card);
+  state.selected = null;
+
+  checkWin(state);
+  return true;
 }
 
-/* ---------------------------
-   WIN CONDITION
----------------------------- */
+/* ---------------- WIN ---------------- */
 
 export function checkWin(state) {
   const won = state.foundations.every(f => f.length === 13);
