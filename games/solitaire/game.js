@@ -73,23 +73,38 @@ function selectCard(colIndex, cardIndex) {
 function moveCard(toColIndex) {
   if (!selected) return;
 
-  const fromCol = gameState.tableau[selected.colIndex];
-  const card = fromCol[selected.cardIndex];
-
-  if (!card) return;
-
   const targetCol = gameState.tableau[toColIndex];
   const targetTop = targetCol[targetCol.length - 1];
 
-  if (canPlace(card, targetTop)) {
-    fromCol.splice(selected.cardIndex, 1);
-    targetCol.push(card);
+  let card;
+
+  // FROM TABLEAU
+  if (selected.colIndex !== undefined) {
+    const fromCol = gameState.tableau[selected.colIndex];
+    card = fromCol[selected.cardIndex];
+
+    if (!card) return;
+
+    if (canPlace(card, targetTop)) {
+      fromCol.splice(selected.cardIndex, 1);
+      targetCol.push(card);
+    }
+  }
+
+  // FROM WASTE
+  if (selected.from === "waste") {
+    card = gameState.waste.pop();
+
+    if (canPlace(card, targetTop)) {
+      targetCol.push(card);
+    } else {
+      gameState.waste.push(card);
+    }
   }
 
   selected = null;
   render();
 }
-
 // --------------------
 // RULES (basic)
 // --------------------
