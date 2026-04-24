@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>Sudoku — SafePlay</title>
+  <link rel="stylesheet" href="../../css/main.css" />
+  <link rel="stylesheet" href="sudoku.css" />
+</head>
+<body>
+
+  <div class="sudoku-page">
+
+    <div class="page-header">
+      <a href="../../index.html" class="back-btn">&#8592; Games</a>
+      <h1 class="game-title">&#35; Sudoku</h1>
+    </div>
+
+    <div class="diff-row">
+      <button class="diff-btn active" data-diff="easy">Easy</button>
+      <button class="diff-btn" data-diff="medium">Medium</button>
+      <button class="diff-btn" data-diff="hard">Hard</button>
+    </div>
+
+    <div class="stats-bar">
+      <span id="diff-label">Easy</span>
+      <span id="timer">00:00</span>
+      <span id="errors">Mistakes: 0</span>
+    </div>
+
+    <div id="sudoku-grid" class="sudoku-grid"></div>
+
+    <div id="sudoku-win" class="sudoku-win" style="display:none;"></div>
+
+    <div class="keypad">
+      <div class="keypad-nums">
+        <button class="key-num" data-num="1">1</button>
+        <button class="key-num" data-num="2">2</button>
+        <button class="key-num" data-num="3">3</button>
+        <button class="key-num" data-num="4">4</button>
+        <button class="key-num" data-num="5">5</button>
+        <button class="key-num" data-num="6">6</button>
+        <button class="key-num" data-num="7">7</button>
+        <button class="key-num" data-num="8">8</button>
+        <button class="key-num" data-num="9">9</button>
+      </div>
+      <div class="keypad-actions">
+        <button id="eraseBtn">&#9003; Erase</button>
+        <button id="notesBtn">&#9998; Notes</button>
+        <button id="hintBtn">&#128161; Hint</button>
+        <button id="newGameBtn">New Game</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="sudoku.js"></script>
+
+</body>
+</html>
